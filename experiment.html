@@ -20,8 +20,8 @@
         }
     });
 
-    teaching_URL = '/orders/F32-Teaching-Order-1.csv'
-    link_URL = '/orders/F32-Link-Order-1.csv'
+    teaching_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Teaching-Order-1.csv?token=GHSAT0AAAAAABXYFRCKLCMZU56VK2F4TNVEYX6VLPA'
+    link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-1.csv?token=GHSAT0AAAAAABXYFRCKBI766VYTZYAY2YCQYX6VLYQ'
 
     Papa.parse(teaching_URL, {
         download: true,
@@ -30,7 +30,7 @@
         complete: function(results) {
             var teaching_trials = results.data
             console.log(teaching_trials)
-            loadLinkTrials(test_Sound);
+            loadLinkTrials(teaching_trials);
         }
     })
 
@@ -49,7 +49,7 @@
 
     
 
-    function createExperiment() {
+    function createExperiment(teaching_trials,link_trials) {
 
         var timeline = []
             
@@ -163,12 +163,18 @@
         }
 
         timeline.push(choose_phase)
+
+        var cur_trials = teaching_trials.filter(function(trial){return trial.block === 1})
+        console.log(cur_trials)
+
+        // for (var i = )
+
         return timeline
 
     }
 
     function startExperiment(teaching_trials,link_trials) {
-        jsPsych.run(createExperiment())
+        jsPsych.run(createExperiment(teaching_trials,link_trials))
     }
 
 
