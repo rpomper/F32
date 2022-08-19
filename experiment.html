@@ -20,8 +20,11 @@
         }
     });
     
-    link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-1.csv'
+    
     teaching_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Teaching-Order-1.csv'
+    recall_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Recall-Order-1.csv'
+    form_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Form-Order-1.csv'
+    link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-1.csv'
 
     Papa.parse(teaching_URL, {
         download: true,
@@ -30,11 +33,37 @@
         complete: function(results) {
             var teaching_trials = results.data
             console.log(teaching_trials)
-            loadLinkTrials(teaching_trials);
+            loadRecallTrials(teaching_trials);
         }
     })
 
-    function loadLinkTrials(teaching_trials) {
+    function loadRecallTrials(teaching_trials) {
+        Papa.parse(recall_URL, {
+            download: true,
+            header: true,
+            dynamicTyping: true,
+            complete: function(results) {
+                var recall_trials = results.data
+                console.log(recall_trials)
+                loadFormTrials(teaching_trials,recall_trials)
+            }
+        })
+    }
+
+    function loadFormTrials(teaching_trials,recall_trials) {
+        Papa.parse(form_URL, {
+            download: true,
+            header: true,
+            dynamicTyping: true,
+            complete: function(results) {
+                var form_trials = results.data
+                console.log(form_trials)
+                loadLinkTrials(teaching_trials,recall_trials,form_trials)
+            }
+        })
+    }
+
+    function loadLinkTrials(teaching_trials,recall_trials,form_trials) {
         Papa.parse(link_URL, {
             download: true,
             header: true,
@@ -42,12 +71,13 @@
             complete: function(results) {
                 var link_trials = results.data
                 console.log(link_trials)
-                startExperiment(teaching_trials,link_trials)
+                startExperiment(teaching_trials,recall_trials,form_trials,link_trials)
             }
         })
     }
 
-    function createExperiment(teaching_trials,link_trials) {
+    function createExperiment(teaching_trials,recall_trials,form_trials,link_trials) {
+
         var timeline = [];
         var phase = 0;
         var imageStart='<img src= "stimuli/images/';
@@ -72,6 +102,12 @@
         
         timeline.push(choose_phase)
 
+        /* 
+        ---------------------
+        INTER TRIAL INTERVALS
+        ---------------------
+        */
+
 
         var show_trial_num = {
             type:jsPsychHtmlKeyboardResponse,
@@ -79,7 +115,14 @@
             response_ends_trial: false,
             stimulus: jsPsych.timelineVariable('tr_num'),
             prompt:"",
-            choices: ['Enter']
+            choices: ['Enter'],
+            conditional_function: function() {
+                        if(hide_ISI) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
         }
 
         var blank_screen = {
@@ -88,38 +131,57 @@
             response_ends_trial: false,
             stimulus: "",
             prompt:"",
-            choices: ['Enter']
+            choices: ['Enter'],
+            conditional_function: function() {
+                        if(hide_ISI) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
         }
 
         var break_screen = {
             type: jsPsychHtmlButtonResponseFlexiblelocations,
-            stimulus: "<p style='font-size:90px;'>Let's take a break</p>",
-            choices: imageStart+"next-button"+buttonStop,
+            stimulus: "<p style='font-size:70px;'>Let's take a break </p>",
+            choices: [imageStart+"next-button"+buttonStop],
             prompt: "",
             margin_vertical: ['20px']
         }
 
-        var retrieve_prompt = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            trial_duration: 3000,
-            response_ends_trial: false,
-            stimulus: audioExt+"teaching/prompt.wav",
-            choices: [imageStart+"J3"+imageStop,imageStart+"blank-button"+buttonStop],
+        var game_break = {
+            type: jsPsychHtmlButtonResponseFlexiblelocations,
+            stimulus: "<p style='font-size:70px;'>Insert game break here </p>",
+            choices: [imageStart+"next-button"+buttonStop],
             prompt: "",
+            margin_vertical: ['20px']
+        }
+
+        /* 
+        ---------------------
+        STUDY TRIALS
+        ---------------------
+        */
+
+        var study_prompt = {
+            type: jsPsychAudioButtonResponseFlexiblelocations,
+            trial_duration: jsPsych.timelineVariable('tr_dur'),
+            stimulus: jsPsych.timelineVariable('name'),
+            choices: jsPsych.timelineVariable('alien'),
+            prompt: "",
+            response_ends_trial: false,
             block_attribute: ['inline-block','block'],
             grid_attribute: false,
             margin_vertical: ['20px']
         }
 
-        var study_prompt = {
+        var retrieve_prompt = {
             type: jsPsychAudioButtonResponseFlexiblelocations,
-            trial_duration: 8800,
-            response_ends_trial: false,
-            // stimulus: audioExt+"teaching/juss.wav",
-            // choices: [imageStart+"J3"+imageStop,imageStart+"blank-button"+buttonStop],
-            stimulus: jsPsych.timelineVariable('stimulus'),
-            choices: jsPsych.timelineVariable('prompt_image'),
+            trial_duration: jsPsych.timelineVariable('tr_dur'),
+            stimulus: audioExt+"teaching/prompt.wav",
+            choices: jsPsych.timelineVariable('alien'),
             prompt: "",
+            response_ends_trial: false,
             block_attribute: ['inline-block','block'],
             grid_attribute: false,
             margin_vertical: ['20px']
@@ -127,54 +189,87 @@
 
         var click_advance = {
             type: jsPsychHtmlButtonResponseFlexiblelocations,
-            // choices: [imageStart+"J3"+imageStop,imageStart+"next-button"+buttonStop],
             stimulus: "",
-            choices: jsPsych.timelineVariable('click_image'),
+            choices: jsPsych.timelineVariable('alien_click'),
             prompt: "",
             block_attribute: ['inline-block','block'],
             grid_attribute: false,
             margin_vertical: ['20px']
         }
 
+        /* 
+        ---------------------
+        TEST TRIALS
+        ---------------------
+        */
+
+        var form_prompt = {
+            type: jsPsychAudioButtonResponseFlexiblelocations,
+            stimulus: jsPsych.timelineVariable('name'),
+            choices: jsPsych.timelineVariable('dots'),
+            prompt: "",
+            block_attribute: ['inline-block','inline-block','inline-block'],
+            response_ends_trial: jsPsych.timelineVariable('response'),
+            trial_duration: jsPsych.timelineVariable('tr_dur'),
+            grid_attribute: false,
+            margin_vertical: ['10px'],
+            on_finish: function(data){
+                if (jsPsych.timelineVariable('log_data')) {
+                    data.phase = phase
+                    data.correct = data.button_pressed == data.correct_response
+                }
+            }
+        }
+        
         var link_prompt = {
             type: jsPsychAudioButtonResponseFlexiblelocations,
-            stimulus: audioExt+"link/juss.wav",
-            // choices: ['<p style="font-size:48px; color:red;">1</p>', '<p style="font-size:48px; color:green;">2</p>', '<p style="font-size:48px; color:blue;">3</p>','<p style="font-size:48px; color:orange;">4</p>'],
-            choices: [imageStart+"J3"+imageStop,imageStart+"A3"+imageStop,imageStart+"A33"+imageStop],
+            // stimulus: audioExt+"link/juss.wav",
+            // choices: [imageStart+"J3"+imageStop,imageStart+"A3"+imageStop,imageStart+"A33"+imageStop],
+            stimulus: jsPsych.timelineVariable('name'),
+            choices: jsPsych.timelineVariable('aliens'),
             prompt: "",
             block_attribute: ['inline-block','inline-block','block'],
             grid_attribute: false,
             margin_vertical: ['10px'],
             on_finish: function(data){
-                console.log(data)
+                data.phase = phase
+                data.correct = data.button_pressed == data.correct_response
             }
         }
 
         /*
-        * TEACHING
+        ------------------------
+        ASSEMBLE TEACHING TRIALS
+        ------------------------
         */
-
-        // var phase = jsPsych.data.get().filter({stimulus: 'Choose phase:'}).response + 1
-        // console.log(jsPsych.data.get())
 
         var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
         console.log(cur_trials)
 
         for (var i = 0; i < cur_trials.length; i++) {
 
-            if (cur_trials[i]['block'] > 2 && cur_trials[i]['block_num'] == 1) {
+            // break between teaching blocks
+            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_num'] == 1) {
                 timeline.push(break_screen)
             }
 
+            var cur_tr_num = cur_trials[i]['tr_num']
+            var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
+            var cur_name = audioExt+"teaching/"+cur_trials[i]['audio']+".wav"
+            var cur_dur = cur_trials[i]['tr_dur']
+
+            // study trial
             if (cur_trials[i]['tr_type']=='study'){
                 var study_trial = {
                     timeline: [show_trial_num,blank_screen,study_prompt,click_advance],
                     timeline_variables:[
-                        {tr_num: "<p style='font-size:90px;'>"+cur_trials[i]['tr_num']+"</p>",
-                        prompt_image: [imageStart+cur_trials[i]['alien']+imageStop,imageStart+"blank-button"+buttonStop],
-                        click_image: [imageStart+cur_trials[i]['alien']+imageStop,imageStart+"next-button"+buttonStop],
-                        button:imageStart+"blank-button"+buttonStop,
-                        stimulus:audioExt+"teaching/"+cur_trials[i]['audio']+".wav"}
+                        {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                        alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                        alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+                        name: cur_name,
+                        button: imageStart+"blank-button"+buttonStop,
+                        tr_dur: cur_dur
+                        }
                     ],
                     conditional_function: function() {
                         if(phase == 1 | phase ==2) {
@@ -187,15 +282,18 @@
                 timeline.push(study_trial)
             }
 
+            // retrieve trial
             if (cur_trials[i]['tr_type']=='retrieve') {
                 var retrieve_trial = {
                     timeline: [show_trial_num,blank_screen,retrieve_prompt,click_advance],
                     timeline_variables:[
-                        {tr_num: "<p style='font-size:90px;'>"+cur_trials[i]['tr_num']+"</p>",
-                        prompt_image: [imageStart+cur_trials[i]['alien']+imageStop,imageStart+"blank-button"+buttonStop],
-                        click_image: [imageStart+cur_trials[i]['alien']+imageStop,imageStart+"next-button"+buttonStop],
-                        button:imageStart+"blank-button"+buttonStop,
-                        stimulus:audioExt+"teaching/prompt.wav"}
+                        {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                        alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                        alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+                        name: audioExt+"teaching/prompt.wav",
+                        button: imageStart+"blank-button"+buttonStop,
+                        tr_dur: cur_dur
+                        }
                     ],
                     conditional_function: function() {
                         if(phase == 1 | phase ==2) {
@@ -209,7 +307,103 @@
             }
         }
 
-        return timeline
+
+        /*
+        ----------------------
+        ASSEMBLE RECALL TRIALS
+        ----------------------
+        */
+
+        var cur_trials = recall_trials.filter(function(trial){return trial.set === 1})
+        console.log(cur_trials)
+
+        for (var i = 0; i < cur_trials.length; i++) {
+
+            var cur_tr_num = cur_trials[i]['tr_num']
+            var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
+            var cur_dur = cur_trials[i]['tr_dur']
+
+            var retrieve_trial = {
+                timeline: [show_trial_num,blank_screen,retrieve_prompt,click_advance],
+                timeline_variables:[
+                    {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                    alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                    alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+                    name: audioExt+"teaching/prompt.wav",
+                    button: imageStart+"blank-button"+buttonStop,
+                    tr_dur: cur_dur
+                    }
+                ],
+                conditional_function: function() {
+                    if(phase == 2 | phase == 3) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            timeline.push(retrieve_trial)
+        }
+
+        /*
+        --------------------
+        ASSEMBLE FORM TRIALS
+        --------------------
+        */
+
+        var cur_trials = form_trials.filter(function(trial){return trial.set === 1})
+        console.log(cur_trials)       
+
+        for (var i = 0; i < cur_trials.length; i++) {
+
+            var cur_tr_num = cur_trials[i]['tr_num']
+            var dot = imageStart+'dot.jpg"  title = "" width="100" height="100">'
+            var cur_dur = cur_trials[i]['tr_dur']
+
+            for (var j = 1; j <4; j++) {
+
+                var cur_name = audioExt+"dot/"+cur_trials[i]['sound'+j.toString()]+".wav"
+                var cur_dots = []
+                for (var k = 0; k < j; k++) {
+                    cur_dots.push(dot)
+                }
+                if (j == 3) {
+                    var allow_response = true
+                } else {
+                    var allow_response = false
+                }
+
+                if (j == 1) {
+                    var hide_ISI = false
+                } else {
+                    var hide_ISI = true
+                }
+
+                var form_trial = {
+                timeline: [show_trial_num,blank_screen,form_prompt],
+                timeline_variables:[
+                    {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                    stimulus: cur_name,
+                    choices: cur_dots,
+                    response: allow_response,
+                    log_data: allow_response,
+                    tr_dur: cur_dur,
+                    hide_ISI: hide_ISI
+                    }
+                ],
+                conditional_function: function() {
+                    if(phase == 4) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            timeline.push(form_trial)
+        }
+    }
+
+    return timeline
 
     }
 

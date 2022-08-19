@@ -1,4 +1,4 @@
-set,block,condition,tr_num,link_tr_num,set_tr_num,top_left,top_right,bot_center,audio,alien,target,correct_response,background
-1,1,hi,1,,1,J3,A3,A33,juss,J3,L,0,black-background
-1,1,hi,2,,2,A3,J3,A33,juss,J3,R,1,black-background
-1,2,hi,3,,1,J3,A3,A33,juss,J3,L,0,black-background
+set,block,condition,tr_num,link_tr_num,set_tr_num,top_left,top_right,bot_center,audio,alien,target,correct_response
+1,1,hi,1,,1,J3,A3,A33,juss,J3,L,0
+1,2,hi,2,,2,A3,J3,A33,juss,J3,R,1
+1,1,hi,3,,1,J3,A3,A33,juss,J3,L,0

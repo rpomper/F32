@@ -1,7 +1,7 @@
 set,block,condition,tr_type,tr_num,block_num,audio,alien,tr_dur
 1,1,hi,study,1,1,juss,J3,8600
-1,1,hi,retrieve,2,2,juss,J3,8600
+1,1,hi,retrieve,2,2,juss,J3,3000
 1,1,hi,study,3,3,juss,J3,8600
 1,2,lo,study,4,1,foob,E1,8600
-1,2,lo,retrieve,5,2,foob,E1,8600
+1,2,lo,retrieve,5,2,foob,E1,3000
 1,2,lo,study,6,3,foob,E1,8600
