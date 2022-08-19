@@ -1,0 +1,3 @@
+set,block,condition,tr_num,phase_num,sound1,sound2,sound3,target,name,correct_response,background
+,1,name first,6,1,gazzer,gavver,gabber,L,gazzer,0,black-background
+,1,name first,7,2,mofi,moki,mothi,R,mothi,2,black-background
