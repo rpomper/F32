@@ -32,6 +32,7 @@
         dynamicTyping: true,
         complete: function(results) {
             var teaching_trials = results.data
+            console.log("Teaching:")
             console.log(teaching_trials)
             loadRecallTrials(teaching_trials);
         }
@@ -44,6 +45,7 @@
             dynamicTyping: true,
             complete: function(results) {
                 var recall_trials = results.data
+                console.log("Recall:")
                 console.log(recall_trials)
                 loadFormTrials(teaching_trials,recall_trials)
             }
@@ -57,6 +59,7 @@
             dynamicTyping: true,
             complete: function(results) {
                 var form_trials = results.data
+                console.log("Form:")
                 console.log(form_trials)
                 loadLinkTrials(teaching_trials,recall_trials,form_trials)
             }
@@ -70,6 +73,7 @@
             dynamicTyping: true,
             complete: function(results) {
                 var link_trials = results.data
+                console.log("Link:")
                 console.log(link_trials)
                 startExperiment(teaching_trials,recall_trials,form_trials,link_trials)
             }
@@ -115,14 +119,7 @@
             response_ends_trial: false,
             stimulus: jsPsych.timelineVariable('tr_num'),
             prompt:"",
-            choices: ['Enter'],
-            conditional_function: function() {
-                        if(hide_ISI) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
+            choices: ['Enter']
         }
 
         var blank_screen = {
@@ -131,14 +128,7 @@
             response_ends_trial: false,
             stimulus: "",
             prompt:"",
-            choices: ['Enter'],
-            conditional_function: function() {
-                        if(hide_ISI) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
+            choices: ['Enter']
         }
 
         var break_screen = {
@@ -213,27 +203,32 @@
             trial_duration: jsPsych.timelineVariable('tr_dur'),
             grid_attribute: false,
             margin_vertical: ['10px'],
+            margin_horizontal: ['100px'],
+            data: jsPsych.timelineVariable('data'),
             on_finish: function(data){
                 if (jsPsych.timelineVariable('log_data')) {
                     data.phase = phase
-                    data.correct = data.button_pressed == data.correct_response
+                    data.correct = data.response == data.correct_response
+                    console.log(data)
                 }
             }
         }
         
         var link_prompt = {
             type: jsPsychAudioButtonResponseFlexiblelocations,
-            // stimulus: audioExt+"link/juss.wav",
-            // choices: [imageStart+"J3"+imageStop,imageStart+"A3"+imageStop,imageStart+"A33"+imageStop],
             stimulus: jsPsych.timelineVariable('name'),
             choices: jsPsych.timelineVariable('aliens'),
             prompt: "",
             block_attribute: ['inline-block','inline-block','block'],
+            response_ends_trial: jsPsych.timelineVariable('response'),
+            trial_duration: jsPsych.timelineVariable('tr_dur'),
             grid_attribute: false,
             margin_vertical: ['10px'],
+            data: jsPsych.timelineVariable('data'),
             on_finish: function(data){
                 data.phase = phase
-                data.correct = data.button_pressed == data.correct_response
+                data.correct = data.response == data.correct_response
+                console.log(data)
             }
         }
 
@@ -244,7 +239,6 @@
         */
 
         var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
-        console.log(cur_trials)
 
         for (var i = 0; i < cur_trials.length; i++) {
 
@@ -315,7 +309,6 @@
         */
 
         var cur_trials = recall_trials.filter(function(trial){return trial.set === 1})
-        console.log(cur_trials)
 
         for (var i = 0; i < cur_trials.length; i++) {
 
@@ -352,47 +345,65 @@
         */
 
         var cur_trials = form_trials.filter(function(trial){return trial.set === 1})
-        console.log(cur_trials)       
 
         for (var i = 0; i < cur_trials.length; i++) {
 
             var cur_tr_num = cur_trials[i]['tr_num']
-            var dot = imageStart+'dot.jpg"  title = "" width="100" height="100">'
-            var cur_dur = cur_trials[i]['tr_dur']
+            var dot = imageStart+"dot"+numButtonStop
+            var blank_dot = imageStart+"blank-dot"+numButtonStop
 
             for (var j = 1; j <4; j++) {
+                // each trial will have 3 steps (j=1, 2, 3)
 
+                // for each step, determine the name that will be heard (from trial order)
                 var cur_name = audioExt+"dot/"+cur_trials[i]['sound'+j.toString()]+".wav"
+
+                // determine the number of visible dots (1, 2, then 3)
+                // and blank dots (2, 1, 0) to be displayed
                 var cur_dots = []
                 for (var k = 0; k < j; k++) {
                     cur_dots.push(dot)
                 }
-                if (j == 3) {
-                    var allow_response = true
-                } else {
-                    var allow_response = false
+                for (var l = 2; l>=j; l--){
+                    cur_dots.push(blank_dot)
                 }
 
-                if (j == 1) {
-                    var hide_ISI = false
+                // only allow a response after the final 3rd step (not 1 or 2)
+                // only log the data after the final 3rd step (not 1 or 2)
+                // steps 1 and 2 each last 1,000 ms (1 sec)
+                // step 3 lasts 10,000ms (10 sec) if the child does not respond
+                if (j == 3) {
+                    var allow_response = true
+                    var cur_data = {set:cur_trials[i]['set'],rep:cur_trials[i]['rep'],block:cur_trials[i]['block'],condition:cur_trials[i]['condition'],form_tr_num:cur_trials[i]['form_tr_num'],target:cur_trials[i]['name'],target_loc:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
+                    var cur_dur = 10000
                 } else {
-                    var hide_ISI = true
+                    var allow_response = false
+                    var cur_data = {}
+                    var cur_dur = 1000
+                }
+                
+                // show the trial number followed by a blank screen before the 1st step
+                // but not before the 2nd and 3rd step
+                if (j == 1) {
+                    var cur_timeline = [show_trial_num,blank_screen,form_prompt]
+                } else {
+                    var cur_timeline = [form_prompt]
                 }
 
                 var form_trial = {
-                timeline: [show_trial_num,blank_screen,form_prompt],
+                timeline: cur_timeline,
                 timeline_variables:[
                     {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
-                    stimulus: cur_name,
-                    choices: cur_dots,
+                    name: cur_name,
+                    dots: cur_dots,
                     response: allow_response,
                     log_data: allow_response,
                     tr_dur: cur_dur,
-                    hide_ISI: hide_ISI
+                    data: cur_data
                     }
                 ],
                 conditional_function: function() {
-                    if(phase == 4) {
+                    if(phase == 2 | phase == 3) {
                         return true;
                     } else {
                         return false;
@@ -403,12 +414,55 @@
         }
     }
 
+        /*
+        ----------------------
+        ASSEMBLE LINK TRIALS
+        ----------------------
+        */
+
+        var cur_trials = link_trials.filter(function(trial){return trial.set === 1})
+
+        for (var i = 0; i < cur_trials.length; i++) {
+
+            var cur_tr_num = cur_trials[i]['tr_num']
+
+            var cur_name = audioExt+"dot/"+cur_trials[i]['name']+".wav"
+
+            var cur_aliens = []
+            cur_aliens.push(imageStart+cur_trials[i]['top_left']+imageStop)
+            cur_aliens.push(imageStart+cur_trials[i]['top_right']+imageStop)
+            cur_aliens.push(imageStart+cur_trials[i]['bot_center']+imageStop)
+
+            var cur_data = {set:cur_trials[i]['set'],rep:cur_trials[i]['rep'],block:cur_trials[i]['block'],condition:cur_trials[i]['condition'],link_tr_num:cur_trials[i]['link_tr_num'],target:cur_trials[i]['name'],target_loc:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
+
+            var link_trial = {
+                timeline: [show_trial_num,blank_screen,link_prompt],
+                timeline_variables:[
+                    {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                    name: cur_name,
+                    aliens: cur_aliens,
+                    response: true,
+                    tr_dur: 10000,
+                    data: cur_data
+                    }
+                ],
+                conditional_function: function() {
+                    if(phase == 2 | phase == 3 | phase == 4) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            timeline.push(link_trial)
+        }
+
     return timeline
 
     }
 
-    function startExperiment(teaching_trials,link_trials) {
-        jsPsych.run(createExperiment(teaching_trials,link_trials))
+    function startExperiment(teaching_trials,recall_trials,form_trials,link_trials) {
+        jsPsych.run(createExperiment(teaching_trials,recall_trials,form_trials,link_trials))
     }
     // function startExperiment(teaching_trials,link_trials,phase) {
     //     jsPsych.run(createExperiment(teaching_trials,link_trials,phase))

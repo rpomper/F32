@@ -1,4 +1,4 @@
-set,rep,condition,tr_num,form_tr_num,sound1,sound2,sound3,target,name,correct_response
-1,1,hi,10,1,juss,guss,vuss,L,juss,0
-1,1,lo,11,2,soob,koob,foob,R,foob,2
-1,2,hi,12,3,guss,juss,vuss,C,juss,1
+set,rep,block,condition,tr_num,form_tr_num,sound1,sound2,sound3,target,name,correct_response
+1,1,1,hi,10,1,juss,guss,vuss,L,juss,0
+1,1,2,lo,11,2,soob,koob,foob,R,foob,2
+1,2,1,hi,12,3,guss,juss,vuss,C,juss,1
