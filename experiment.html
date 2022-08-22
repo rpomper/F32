@@ -397,8 +397,8 @@
                     name: cur_name,
                     dots: cur_dots,
                     response: allow_response,
-                    log_data: allow_response,
                     tr_dur: cur_dur,
+                    log_data: allow_response,
                     data: cur_data
                     }
                 ],
@@ -464,9 +464,5 @@
     function startExperiment(teaching_trials,recall_trials,form_trials,link_trials) {
         jsPsych.run(createExperiment(teaching_trials,recall_trials,form_trials,link_trials))
     }
-    // function startExperiment(teaching_trials,link_trials,phase) {
-    //     jsPsych.run(createExperiment(teaching_trials,link_trials,phase))
-    // }
-    // jsPsych.run([choose_phase,study_trial,retrieval_trial,link_trial]);
   </script>
 </html>
