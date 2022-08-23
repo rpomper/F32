@@ -1,0 +1,4 @@
+set,block,tr_num,block_tr_num,ld_tr_num,condition,type,name,neighbor,correct_response
+1,1,16,1,1,hi,word,juss,bus,0
+1,1,17,2,2,lo,nonword,foob,feeb,1
+1,2,18,1,3,hi,word,juss,fuss,0

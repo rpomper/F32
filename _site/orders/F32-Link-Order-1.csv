@@ -1,0 +1,4 @@
+set,rep,block,condition,tr_num,link_tr_num,top_left,top_right,bot_center,name,alien,target,correct_response
+1,1,1,hi,13,1,J3,A3,A33,juss,J3,L,0
+1,1,2,low,14,2,G3,E1,C31,foob,E1,R,1
+1,2,1,hi,15,3,C31,A33,J3,juss,J3,C,2
