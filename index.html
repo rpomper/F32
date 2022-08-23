@@ -8,6 +8,7 @@
     <script src="jspsych/plugin-audio-button-response.js"></script>
     <script src="jspsych/plugin-html-button-response-flexiblelocations.js"></script>
     <script src="jspsych/plugin-audio-button-response-flexiblelocations.js"></script>
+    <script src="jspsych/plugin-preload.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.min.js"></script>
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
   </head>
@@ -120,6 +121,75 @@
         }
         
         timeline.push(choose_phase)
+
+
+        var preload_phase_1 = {
+            type: jsPsychPreload,
+            trials: [study_trial,retrieve_trial],
+            conditional_function: function() {
+                        if(phase == 1) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    },
+                    on_finish: function(data){
+                        console.log("preloaded phase 1 stims")
+                    }
+        }
+
+        timeline.push(preload_phase_1)
+
+        var preload_phase_2 = {
+            type: jsPsychPreload,
+            trials: [study_trial,retrieve_trial,form_trial,link_trial],
+            conditional_function: function() {
+                        if(phase == 2) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    },
+                    on_finish: function(data){
+                        console.log("preloaded phase 2 stims")
+                    }
+        }
+
+        timeline.push(preload_phase_2)
+
+        var preload_phase_3 = {
+            type: jsPsychPreload,
+            trials: [retrieve_trial,form_trial,link_trial],
+            conditional_function: function() {
+                        if(phase == 3) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    },
+                    on_finish: function(data){
+                        console.log("preloaded phase 3 stims")
+                    }
+        }
+
+        timeline.push(preload_phase_3)
+
+        var preload_phase_4 = {
+            type: jsPsychPreload,
+            trials: [ld_trial],
+            conditional_function: function() {
+                        if(phase == 4) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    },
+                    on_finish: function(data){
+                        console.log("preloaded phase 4 stims")
+                    }
+        }
+
+        timeline.push(preload_phase_3)
 
         /* 
         ---------------------
@@ -610,6 +680,7 @@
     }
 
     // RON: add code to tag trial type in the data saved for each trial (right now it's just audio-button-response, etc.)
+    // RON: add code to preload images and sounds
 
   </script>
 </html>
