@@ -25,6 +25,7 @@
     recall_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Recall-Order-1.csv'
     form_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Form-Order-1.csv'
     link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-1.csv'
+    ld_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-LD-Order-1.csv'
 
     Papa.parse(teaching_URL, {
         download: true,
@@ -75,7 +76,21 @@
                 var link_trials = results.data
                 console.log("Link:")
                 console.log(link_trials)
-                startExperiment(teaching_trials,recall_trials,form_trials,link_trials)
+                loadLDTrials(teaching_trials,recall_trials,form_trials,link_trials)
+            }
+        })
+    }
+
+    function loadLDTrials(teaching_trials,recall_trials,form_trials) {
+        Papa.parse(ld_URL, {
+            download: true,
+            header: true,
+            dynamicTyping: true,
+            complete: function(results) {
+                var ld_trials = results.data
+                console.log("LD:")
+                console.log(ld_trials)
+                startExperiment(teaching_trials,recall_trials,form_trials,link_trials,ld_trials)
             }
         })
     }
@@ -112,12 +127,43 @@
         ---------------------
         */
 
+        // in the .csv files, the column tr_num is cumulative across all of the trials (teaching, recall, form, link, and LD)
+        // we need to adjust these numbers depending on the phase
+        // when phase = 1,
+            // children will complete the teaching trials for the 1st time, so
+                // no adjustment is necessary
+        // when phase = 2,
+            // children will repeat the same teaching trials again, so add 
+                // teaching_trials.filter(function(trial){return trial.set === 1}).length
+            // children will complete the test trials after that 2nd repetition of teaching, so also add
+                // teaching_trials.filter(function(trial){return trial.set === 1}).length
+        // when phase = 3, 
+            // it is the beginning of the second day
+            // children will first complete the test trials without any preceding teaching trials, so subtract
+                // teaching_trials.filter(function(trial){return trial.set === 1}).length
+        // when phase = 4,
+            // children will complete the lexical decision trials after the test trials, so also subtract 
+                // teaching_trials.filter(function(trial){return trial.set === 1}).length
+
 
         var show_trial_num = {
             type:jsPsychHtmlKeyboardResponse,
             trial_duration:500,
             response_ends_trial: false,
-            stimulus: jsPsych.timelineVariable('tr_num'),
+            stimulus: function() {
+                var tr_num_order = jsPsych.timelineVariable('tr_num')
+
+                if (phase==2) {
+                    var tr_num_adj = teaching_trials.filter(function(trial){return trial.set === 1}).length
+                } else if (phase == 3 || phase == 4) {
+                     var tr_num_adj = - teaching_trials.filter(function(trial){return trial.set === 1}).length
+                } else {
+                     var tr_num_adj = 0
+                }
+                
+                var tr_num_final = tr_num_order + tr_num_adj
+                return "<p style='font-size:90px;'>"+tr_num_final.toString()+"</p>"
+            },
             prompt:"",
             choices: ['Enter']
         }
@@ -133,7 +179,7 @@
 
         var break_screen = {
             type: jsPsychHtmlButtonResponseFlexiblelocations,
-            stimulus: "<p style='font-size:70px;'>Let's take a break </p>",
+            stimulus: jsPsych.timelineVariable('break_message'),
             choices: [imageStart+"next-button"+buttonStop],
             prompt: "",
             margin_vertical: ['20px']
@@ -232,6 +278,24 @@
             }
         }
 
+        var ld_prompt = {
+            type: jsPsychAudioButtonResponseFlexiblelocations,
+            stimulus: jsPsych.timelineVariable('name'),
+            choices: [imageStart+"yes-button"+buttonStop,imageStart+"no-button"+buttonStop],
+            prompt: "",
+            block_attribute: ['inline-block','inline-block'],
+            response_ends_trial: jsPsych.timelineVariable('response'),
+            trial_duration: jsPsych.timelineVariable('tr_dur'),
+            grid_attribute: false,
+            margin_vertical: ['10px'],
+            data: jsPsych.timelineVariable('data'),
+            on_finish: function(data){
+                data.phase = phase
+                data.correct = data.response == data.correct_response
+                console.log(data)
+            }
+        }
+
         /*
         ------------------------
         ASSEMBLE TEACHING TRIALS
@@ -244,7 +308,20 @@
 
             // break between teaching blocks
             if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_num'] == 1) {
-                timeline.push(break_screen)
+                var teaching_break = {
+                    timeline: [break_screen],
+                    timeline_variables:[
+                        {break_message: "<p style='font-size:70px;'>2-min game break </p>"}
+                    ],
+                    conditional_function: function() {
+                        if(phase == 1 | phase == 2) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }
+                timeline.push(teaching_break)
             }
 
             var cur_tr_num = cur_trials[i]['tr_num']
@@ -257,7 +334,7 @@
                 var study_trial = {
                     timeline: [show_trial_num,blank_screen,study_prompt,click_advance],
                     timeline_variables:[
-                        {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                        {tr_num: cur_tr_num,
                         alien: [cur_alien,imageStart+"blank-button"+buttonStop],
                         alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
                         name: cur_name,
@@ -281,7 +358,7 @@
                 var retrieve_trial = {
                     timeline: [show_trial_num,blank_screen,retrieve_prompt,click_advance],
                     timeline_variables:[
-                        {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                        {tr_num: cur_tr_num,
                         alien: [cur_alien,imageStart+"blank-button"+buttonStop],
                         alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
                         name: audioExt+"teaching/prompt.wav",
@@ -308,6 +385,9 @@
         ----------------------
         */
 
+        // if Phase = 2, testing is on day 1 and preceded by teaching trials, so tr_num is correct
+        // if Phase = 3, testing is on day 2 and _not_ preceded by teaching trials, so tr_num
+
         var cur_trials = recall_trials.filter(function(trial){return trial.set === 1})
 
         for (var i = 0; i < cur_trials.length; i++) {
@@ -319,7 +399,7 @@
             var retrieve_trial = {
                 timeline: [show_trial_num,blank_screen,retrieve_prompt,click_advance],
                 timeline_variables:[
-                    {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                    {tr_num: cur_tr_num,
                     alien: [cur_alien,imageStart+"blank-button"+buttonStop],
                     alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
                     name: audioExt+"teaching/prompt.wav",
@@ -393,7 +473,7 @@
                 var form_trial = {
                 timeline: cur_timeline,
                 timeline_variables:[
-                    {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                    {tr_num: cur_tr_num,
                     name: cur_name,
                     dots: cur_dots,
                     response: allow_response,
@@ -438,7 +518,7 @@
             var link_trial = {
                 timeline: [show_trial_num,blank_screen,link_prompt],
                 timeline_variables:[
-                    {tr_num: "<p style='font-size:90px;'>"+cur_tr_num+"</p>",
+                    {tr_num: cur_tr_num,
                     name: cur_name,
                     aliens: cur_aliens,
                     response: true,
@@ -447,7 +527,7 @@
                     }
                 ],
                 conditional_function: function() {
-                    if(phase == 2 | phase == 3 | phase == 4) {
+                    if(phase == 2 | phase == 3) {
                         return true;
                     } else {
                         return false;
@@ -455,6 +535,42 @@
                 }
             }
             timeline.push(link_trial)
+        }
+
+
+        /*
+        --------------------------------
+        ASSEMBLE LEXICAL DECISION TRIALS
+        --------------------------------
+        */
+
+        var cur_trials = ld_trials.filter(function(trial){return trial.set === 1})
+
+        for (var i = 0; i < cur_trials.length; i++) {
+
+            var cur_tr_num = cur_trials[i]['tr_num']
+            var cur_name = audioExt+"LD/"+cur_trials[i]['neighbor']+".wav"
+            var cur_data = {set:cur_trials[i]['set'],rep:cur_trials[i]['rep'],block:cur_trials[i]['block'],condition:cur_trials[i]['condition'],link_tr_num:cur_trials[i]['link_tr_num'],target:cur_trials[i]['name'],target_loc:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
+
+            var ld_trial = {
+                timeline: [show_trial_num,blank_screen,ld_prompt],
+                timeline_variables:[
+                    {tr_num: cur_tr_num,
+                    name: cur_name,
+                    response: true,
+                    tr_dur: 10000,
+                    data: cur_data
+                    }
+                ],
+                conditional_function: function() {
+                    if(phase == 4) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            timeline.push(ld_trial)
         }
 
     return timeline
