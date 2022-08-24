@@ -22,12 +22,16 @@
         }
     });
     
-    
-    teaching_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Teaching-Order-1.csv'
-    recall_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Recall-Order-1.csv'
-    form_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Form-Order-1.csv'
-    link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-1.csv'
-    ld_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-LD-Order-1.csv'
+    teaching_URL = "/orders/F32-Teaching-Order-1.csv"
+    recall_URL = "/orders/F32-Recall-Order-1.csv"
+    form_URL = "/orders/F32-Form-Order-1.csv"
+    link_URL = "/orders/F32-Link-Order-1.csv"
+    ld_URL = "/orders/F32-LD-Order-1.csv"
+    // teaching_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Teaching-Order-1.csv'
+    // recall_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Recall-Order-1.csv'
+    // form_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Form-Order-1.csv'
+    // link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-1.csv'
+    // ld_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-LD-Order-1.csv'
 
     Papa.parse(teaching_URL, {
         download: true,
@@ -137,74 +141,24 @@
         timeline.push(auto_preload_trial)
 
 
-        // var preload_phase_1 = {
-        //     type: jsPsychPreload,
-        //     trials: [study_trial,retrieve_trial],
-        //     show_detailed_errors: true,
-        //     conditional_function: function() {
-        //                 if(phase == 1) {
-        //                     return true
-        //                 } else {
-        //                     return false
-        //                 }
-        //             },
-        //             on_finish: function(data){
-        //                 console.log("preloaded phase 1 stims")
-        //             }
-        // }
+        /* 
+        ------------
+        INSTRUCTIONS
+        ------------
+        */
 
-        // timeline.push(preload_phase_1)
+        var mae = {
+            type: jsPsychHtmlButtonResponseFlexiblelocations,
+            stimulus: imageStart+"mae"+imageStop,
+            choices: [imageStart+"next-button"+buttonStop],
+            prompt: "",
+            margin_vertical:['20px']
+        }
 
-        // var preload_phase_2 = {
-        //     type: jsPsychPreload,
-        //     trials: [study_trial,retrieve_trial,form_trial,link_trial],
-        //     conditional_function: function() {
-        //                 if(phase == 2) {
-        //                     return true
-        //                 } else {
-        //                     return false
-        //                 }
-        //             },
-        //             on_finish: function(data){
-        //                 console.log("preloaded phase 2 stims")
-        //             }
-        // }
+        timeline.push(mae)
 
-        // timeline.push(preload_phase_2)
 
-        // var preload_phase_3 = {
-        //     type: jsPsychPreload,
-        //     trials: [retrieve_trial,form_trial,link_trial],
-        //     conditional_function: function() {
-        //                 if(phase == 3) {
-        //                     return true
-        //                 } else {
-        //                     return false
-        //                 }
-        //             },
-        //             on_finish: function(data){
-        //                 console.log("preloaded phase 3 stims")
-        //             }
-        // }
 
-        // timeline.push(preload_phase_3)
-
-        // var preload_phase_4 = {
-        //     type: jsPsychPreload,
-        //     trials: [ld_trial],
-        //     conditional_function: function() {
-        //                 if(phase == 4) {
-        //                     return true
-        //                 } else {
-        //                     return false
-        //                 }
-        //             },
-        //             on_finish: function(data){
-        //                 console.log("preloaded phase 4 stims")
-        //             }
-        // }
-
-        // timeline.push(preload_phase_4)
 
         /* 
         ---------------------
