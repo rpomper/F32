@@ -52,6 +52,15 @@ var jsPsychHtmlKeyboardResponse = (function (jspsych) {
               pretty_name: "Response ends trial",
               default: true,
           },
+          /**
+           * RON: change the background to a specificied image
+           */
+          set_background: {
+            type: jspsych.ParameterType.HTML_STRING,
+            pretty_name: "Assign background image",
+            default: 'black-background',
+            description: 'The file name for image to be displayed as background',
+        },
       },
   };
   /**
@@ -67,6 +76,10 @@ var jsPsychHtmlKeyboardResponse = (function (jspsych) {
           this.jsPsych = jsPsych;
       }
       trial(display_element, trial) {
+
+        // RON
+        document.body.style.backgroundImage = "url('stimuli/images/"+trial.set_background+".jpg')"
+
           var new_html = '<div id="jspsych-html-keyboard-response-stimulus">' + trial.stimulus + "</div>";
           // add prompt
           if (trial.prompt !== null) {
