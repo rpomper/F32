@@ -2,10 +2,11 @@
 
 setwd("~/Documents/GitHub/F32/stimuli/sounds/dot")
 cur_sounds = list.files()
-export = "["
+export = ""
 for (i in 1:length(cur_sounds)) {
   export = paste(export,"stimuli/sounds/dot/",cur_sounds[i],", ",sep="")
 }
+
 
 
 setwd("~/Documents/GitHub/F32/stimuli/sounds/LD")
@@ -34,5 +35,6 @@ for (i in 1:length(all_sounds)) {
 
 }
 
-setwd("~/Documents/GitHub/F32/stimuli/sounds/")
-write.csv('F32-preload-audio.csv',export)
+setwd("~/Documents/GitHub/F32/orders/")
+save = data.frame('audio'=export,'images'="")
+write.csv(save,file='F32-preload.csv')
