@@ -34,18 +34,18 @@
     form_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Form-Order-1.csv'
     link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-1.csv'
     ld_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-LD-Order-1.csv'
-    preload_audio_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-preload-audio.csv'
+    preload_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-preload.csv'
 
     
-    Papa.parse(preload_audio_URL, {
+    Papa.parse(preload_URL, {
         download: true,
         header: true,
         dynamicTyping: true,
         complete: function(results) {
-            var preload_audio = results.data
+            var preload_stims = results.data
             console.log("Preloading:")
-            console.log(preload_audio)
-            loadTeachingTrials(preload_audio);
+            console.log(preload_stims)
+            loadTeachingTrials(preload_stims);
         }
     })
     
@@ -61,7 +61,7 @@
     //     }
     // })
 
-    function loadTeachingTrials(preload_audio) {
+    function loadTeachingTrials(preload_stims) {
         Papa.parse(teaching_URL, {
             download: true,
             header: true,
@@ -70,12 +70,12 @@
                 var teaching_trials = results.data
                 console.log("Teaching:")
                 console.log(teaching_trials)
-                loadRecallTrials(preload_audio,teaching_trials);
+                loadRecallTrials(preload_stims,teaching_trials);
             }
         })
     }
 
-    function loadRecallTrials(preload_audio,teaching_trials) {
+    function loadRecallTrials(preload_stims,teaching_trials) {
         Papa.parse(recall_URL, {
             download: true,
             header: true,
@@ -84,12 +84,12 @@
                 var recall_trials = results.data
                 console.log("Recall:")
                 console.log(recall_trials)
-                loadFormTrials(preload_audio,teaching_trials,recall_trials)
+                loadFormTrials(preload_stims,teaching_trials,recall_trials)
             }
         })
     }
 
-    function loadFormTrials(preload_audio,teaching_trials,recall_trials) {
+    function loadFormTrials(preload_stims,teaching_trials,recall_trials) {
         Papa.parse(form_URL, {
             download: true,
             header: true,
@@ -98,12 +98,12 @@
                 var form_trials = results.data
                 console.log("Form:")
                 console.log(form_trials)
-                loadLinkTrials(preload_audio,teaching_trials,recall_trials,form_trials)
+                loadLinkTrials(preload_stims,teaching_trials,recall_trials,form_trials)
             }
         })
     }
 
-    function loadLinkTrials(preload_audio,teaching_trials,recall_trials,form_trials) {
+    function loadLinkTrials(preload_stims,teaching_trials,recall_trials,form_trials) {
         Papa.parse(link_URL, {
             download: true,
             header: true,
@@ -112,12 +112,12 @@
                 var link_trials = results.data
                 console.log("Link:")
                 console.log(link_trials)
-                loadLDTrials(preload_audio,teaching_trials,recall_trials,form_trials,link_trials)
+                loadLDTrials(preload_stims,teaching_trials,recall_trials,form_trials,link_trials)
             }
         })
     }
 
-    function loadLDTrials(preload_audio,teaching_trials,recall_trials,form_trials,link_trials) {
+    function loadLDTrials(preload_stims,teaching_trials,recall_trials,form_trials,link_trials) {
         Papa.parse(ld_URL, {
             download: true,
             header: true,
@@ -126,12 +126,12 @@
                 var ld_trials = results.data
                 console.log("LD:")
                 console.log(ld_trials)
-                startExperiment(preload_audio,teaching_trials,recall_trials,form_trials,link_trials,ld_trials)
+                startExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials)
             }
         })
     }
 
-    function createExperiment(preload_audio,teaching_trials,recall_trials,form_trials,link_trials,ld_trials) {
+    function createExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials) {
 
         var timeline = [];
         var phase = 0;
@@ -415,7 +415,7 @@
             auto_preload: true,
             images: ['/stimuli/images/A1.jpg','/stimuli/images/A3.jpg','/stimuli/images/A33.jpg','/stimuli/images/B2.jpg','/stimuli/images/B23.jpg','/stimuli/images/C31.jpg','/stimuli/images/E1.jpg','/stimuli/images/E3.jpg','/stimuli/images/G3.jpg','/stimuli/images/I1.jpg','/stimuli/images/J2.jpg','/stimuli/images/J3.jpg'],
             // audio: ['stimuli/sounds/teaching/chev.wav','stimuli/sounds/teaching/darg.wav','stimuli/sounds/teaching/foob.wav','stimuli/sounds/teaching/gazzer.wav','stimuli/sounds/teaching/heab.wav','stimuli/sounds/teaching/juss.wav','stimuli/sounds/teaching/koba.wav','stimuli/sounds/teaching/kulp.wav','stimuli/sounds/teaching/modi.wav','stimuli/sounds/teaching/pyzer.wav','stimuli/sounds/teaching/sarl.wav','stimuli/sounds/teaching/wilp.wav'],
-            audio: preload_audio,
+            audio: preload_stims[1]['audio'],
             conditional_function: function() {
                 if(phase == 1 | phase == 2) {
                     return true
@@ -727,8 +727,8 @@
 
     }
 
-    function startExperiment(preload_audio,teaching_trials,recall_trials,form_trials,link_trials,ld_trials) {
-        jsPsych.run(createExperiment(preload_audio,teaching_trials,recall_trials,form_trials,link_trials,ld_trials))
+    function startExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials) {
+        jsPsych.run(createExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials))
     }
 
     // RON: add code to tag trial type in the data saved for each trial (right now it's just audio-button-response, etc.)
