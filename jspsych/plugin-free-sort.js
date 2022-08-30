@@ -33,13 +33,13 @@ var jsPsychFreeSort = (function (jspsych) {
           sort_area_height: {
               type: jspsych.ParameterType.INT,
               pretty_name: "Sort area height",
-              default: 700,
+              default: 800,
           },
           /** The width in pixels of the container that subjects can move the stimuli in. */
           sort_area_width: {
               type: jspsych.ParameterType.INT,
               pretty_name: "Sort area width",
-              default: 700,
+              default: 800,
           },
           /** The shape of the sorting area */
           sort_area_shape: {
@@ -136,6 +136,15 @@ var jsPsychFreeSort = (function (jspsych) {
               pretty_name: "column spread factor",
               default: 1,
           },
+          /**
+           * RON: change the background to a specificied image
+           */
+          set_background: {
+            type: jspsych.ParameterType.HTML_STRING,
+            pretty_name: "Assign background image",
+            default: 'black-background',
+            description: 'The file name for image to be displayed as background',
+          },
       },
   };
   /**
@@ -152,6 +161,10 @@ var jsPsychFreeSort = (function (jspsych) {
       }
       trial(display_element, trial) {
           var start_time = performance.now();
+
+        //   RON
+        document.body.style.backgroundImage = "url('stimuli/images/"+trial.set_background+".jpg')"
+
           // can't change trial properties (const), so create new variables for properties that might need to be changed
           var border_color_out = trial.border_color_out;
           var border_width = trial.border_width;

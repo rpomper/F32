@@ -8,6 +8,8 @@
     <script src="jspsych/plugin-audio-button-response.js"></script>
     <script src="jspsych/plugin-html-button-response-flexiblelocations.js"></script>
     <script src="jspsych/plugin-audio-button-response-flexiblelocations.js"></script>
+    <script src="jspsych/plugin-reconstruction.js"></script>
+    <script src="jspsych/plugin-free-sort.js"></script>
     <script src="jspsych/plugin-preload.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.min.js"></script>
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
@@ -157,6 +159,49 @@
 
         timeline.push(mae)
 
+        /* 
+        ------------
+        GAMES
+        ------------
+        */
+
+       // ASSEMBLE SHIP
+       var spaceship_parts = ['stimuli/images/spaceship-1.jpg','stimuli/images/spaceship-2.jpg','stimuli/images/spaceship-3.jpg']
+       
+       var assemble_ship = {
+        type: jsPsychFreeSort,
+        stimuli: spaceship_parts,
+        stim_height: 150,
+        stim_width: 150,
+        sort_area_height: 500,
+        sort_area_width: 800,
+        stim_starts_inside: true,
+        set_background:'launch-pad-background',
+        prompt: "",
+        button_label: "Next"
+        };
+        
+        timeline.push(assemble_ship)
+
+        // (150 - size/2)
+       
+        var sample_function = function(param){
+            var size = 1 + Math.floor(param*250);
+            var html = '<div style="display: block; margin: auto; height: 300px; width: 300px; position: relative;">'+
+                '<div style="display: block; position: absolute; bottom: '+0+'px; left:100px; background-color: #FFFF; '+
+                'width: 100px; height: '+size+'px;"></div></div><p>Press "up" to make the square larger. Press "down" to make the square smaller.</p>'+
+                '<p>When the square is the same size as the previous one, click Continue.</p>';
+                return html;}
+
+        var reconstruction = {
+            type: jsPsychReconstruction,
+            stim_function: sample_function,
+            starting_value: 0.01,
+            key_increase: "ArrowUp",
+            key_decrease: "ArrowDown"
+        }
+
+        timeline.push(reconstruction)
 
 
 
@@ -555,7 +600,7 @@
 
             var cur_tr_num = cur_trials[i]['tr_num']
 
-            var cur_name = audioExt+"dot/"+cur_trials[i]['name']+".wav"
+            var cur_name = audioExt+"link/"+cur_trials[i]['name']+".wav"
 
             var cur_aliens = []
             cur_aliens.push(imageStart+cur_trials[i]['top_left']+imageStop)
