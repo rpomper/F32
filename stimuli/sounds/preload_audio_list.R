@@ -4,7 +4,11 @@ setwd("~/Documents/GitHub/F32/stimuli/sounds/teaching")
 cur_sounds = list.files()
 export = ""
 for (i in 1:length(cur_sounds)) {
-  export = paste(export,"stimuli/sounds/teaching/",cur_sounds[i],",",sep="")
+  if (i < length(cur_sounds)) {
+    export = paste(export,"stimuli/sounds/teaching/",cur_sounds[i],",",sep="")
+  } else {
+    export = paste(export,"stimuli/sounds/teaching/",cur_sounds[i],sep="")
+    }
 }
 
 
