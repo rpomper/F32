@@ -46,7 +46,7 @@ var jsPsychFreeSort = (function (jspsych) {
               type: jspsych.ParameterType.SELECT,
               pretty_name: "Sort area shape",
               options: ["square", "ellipse"],
-              default: "ellipse",
+              default: "square",
           },
           /** HTML to display above/below the sort area. It can be used to provide a reminder about the action the subject is supposed to take. */
           prompt: {
@@ -163,7 +163,7 @@ var jsPsychFreeSort = (function (jspsych) {
           var start_time = performance.now();
 
         //   RON
-        document.body.style.backgroundImage = "url('stimuli/images/"+trial.set_background+".jpg')"
+        document.body.style.backgroundImage = "url('stimuli/images/black-background.jpg')"
 
           // can't change trial properties (const), so create new variables for properties that might need to be changed
           var border_color_out = trial.border_color_out;
@@ -176,19 +176,22 @@ var jsPsychFreeSort = (function (jspsych) {
               border_width = trial.sort_area_height * 0.03;
           }
           let html = "<div " +
-              'id="jspsych-free-sort-arena" ' +
-              'class="jspsych-free-sort-arena" ' +
-              'style="position: relative; width:' +
-              trial.sort_area_width +
-              "px; height:" +
-              trial.sort_area_height +
-              'px; margin: auto;"</div>';
+            'id="jspsych-free-sort-arena" ' +
+            'class="jspsych-free-sort-arena" ' +
+            'style="position: relative; width:' +
+            trial.sort_area_width +
+            "px; height:" +
+            trial.sort_area_height +
+            'px; margin: auto;"</div>';
           // another div for border
           html +=
               "<div " +
                   'id="jspsych-free-sort-border" ' +
                   'class="jspsych-free-sort-border" ' +
-                  'style="position: relative; width:' +
+                  'style="position: relative;' +
+                  "background-image: url('stimuli/images/" + 
+                  trial.set_background + ".jpg');"+
+                  'width:' +
                   trial.sort_area_width * 0.94 +
                   "px; height:" +
                   trial.sort_area_height * 0.94 +
@@ -327,7 +330,8 @@ var jsPsychFreeSort = (function (jspsych) {
           }
           if (inside.every(Boolean)) {
               if (trial.change_border_background_color) {
-                  border.style.background = trial.border_color_in;
+                //   border.style.background = trial.border_color_in;
+                  border.style.background = "url('stimuli/images/"+trial.set_background+".jpg')";
               }
               button.style.visibility = "visible";
               display_element.querySelector("#jspsych-free-sort-counter").innerHTML =
@@ -351,13 +355,13 @@ var jsPsychFreeSort = (function (jspsych) {
                       pageY = event.pageY;
                   }
                   //if (typeof document.ontouchend !== "undefined") {
-                  if (event instanceof TouchEvent) {
-                      // for touch devices
-                      event.preventDefault();
-                      const touchObject = event.changedTouches[0];
-                      pageX = touchObject.pageX;
-                      pageY = touchObject.pageY;
-                  }
+                //   if (event instanceof TouchEvent) {
+                //       // for touch devices
+                //       event.preventDefault();
+                //       const touchObject = event.changedTouches[0];
+                //       pageX = touchObject.pageX;
+                //       pageY = touchObject.pageY;
+                //   }
                   let elem = event.currentTarget;
                   let x = pageX - elem.offsetLeft;
                   let y = pageY - elem.offsetTop - window.scrollY;
@@ -380,11 +384,11 @@ var jsPsychFreeSort = (function (jspsych) {
                       if (trial.change_border_background_color) {
                           if (cur_in) {
                               border.style.borderColor = trial.border_color_in;
-                              border.style.background = "None";
+                              border.style.background = "url('stimuli/images/"+trial.set_background+".jpg')";
                           }
                           else {
                               border.style.borderColor = border_color_out;
-                              border.style.background = "None";
+                              border.style.background = "none";
                           }
                       }
                       // replace in overall array, grab index from item id
@@ -393,14 +397,16 @@ var jsPsychFreeSort = (function (jspsych) {
                       // modify text and background if all items are inside
                       if (inside.every(Boolean)) {
                           if (trial.change_border_background_color) {
-                              border.style.background = trial.border_color_in;
+                            //border.style.background = trial.border_color_in; ron
+                              border.style.background = "url('stimuli/images/"+trial.set_background+".jpg')";
                           }
                           button.style.visibility = "visible";
                           display_element.querySelector("#jspsych-free-sort-counter").innerHTML =
                               trial.counter_text_finished;
                       }
                       else {
-                          border.style.background = "none";
+                        //border.style.background = "none"; ron
+                          border.style.background = "url('stimuli/images/"+trial.set_background+".jpg')";
                           button.style.visibility = "hidden";
                           display_element.querySelector("#jspsych-free-sort-counter").innerHTML =
                               get_counter_text(inside.length - inside.filter(Boolean).length);
@@ -412,11 +418,13 @@ var jsPsychFreeSort = (function (jspsych) {
                       elem.style.transform = "scale(1, 1)";
                       if (trial.change_border_background_color) {
                           if (inside.every(Boolean)) {
-                              border.style.background = trial.border_color_in;
+                            //border.style.background = trial.border_color_in; ron
+                              border.style.background = "url('stimuli/images/"+trial.set_background+".jpg')";
                               border.style.borderColor = trial.border_color_in;
                           }
                           else {
-                              border.style.background = "none";
+                            //border.style.background = "none";
+                              border.style.background = "url('stimuli/images/"+trial.set_background+".jpg')";
                               border.style.borderColor = border_color_out;
                           }
                       }

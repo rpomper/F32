@@ -45,5 +45,5 @@ for (i in 1:length(cur_images)) {
 
 
 setwd("~/Documents/GitHub/F32/orders/")
-save = data.frame('audio'=all_sounds,'images'=all_images,row.names=F)
-write.csv(save,file='F32-preload.csv')
+save = data.frame('audio'=all_sounds,'images'=all_images)
+write.csv(save,file='F32-preload.csv',row.names=F)

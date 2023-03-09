@@ -1,0 +1,9 @@
+week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,recall_tr_num,block,rep,condition,audio,alien,tr_dur
+1,1,1,1,21,1,1,1,low,sarl,A3,3000
+1,1,1,1,22,2,2,1,high,pyzer,C31,3000
+1,1,1,1,23,3,2,2,high,pyzer,C31,3000
+1,1,1,1,24,4,1,2,high,juss,J3,3000
+2,1,1,2,21,1,1,1,high,darg,E3,3000
+2,1,1,2,22,2,2,1,low,chev,A1,3000
+2,1,1,2,23,3,1,2,low,gazzer,J2,3000
+2,1,1,2,24,4,2,2,high,heab,I1,3000

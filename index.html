@@ -10,6 +10,7 @@
     <script src="jspsych/plugin-audio-button-response-flexiblelocations.js"></script>
     <script src="jspsych/plugin-reconstruction.js"></script>
     <script src="jspsych/plugin-free-sort.js"></script>
+    <script src="jspsych/plugin-video-keyboard-response.js"></script>
     <script src="jspsych/plugin-preload.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.min.js"></script>
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
@@ -43,8 +44,10 @@
         dynamicTyping: true,
         complete: function(results) {
             var preload_stims = results.data
-            console.log("Preloading:")
+            console.log("Sounds to preload:")
             console.log(preload_stims[0]['audio'].split(',').slice(0,-1))
+            console.log("Images to preload:")
+            console.log(preload_stims[0]['images'].split(',').slice(0,-1))
             loadTeachingTrials(preload_stims);
         }
     })
@@ -137,7 +140,10 @@
         var phase = 0;
         var imageStart='<img src= "stimuli/images/';
         var numButtonStop= '.jpg"  title = "" width="100" height="100">';
+        var numPadStop= '.jpg"  title = "" width="800" height="600">'
+        var routePadStop= '.jpg"  title = "" width="1162" height="600">'
         var buttonStop= '.jpg"  title = "" width="100" height="50">';
+        var squareButtonStop = '.jpg"  title = "" width="200" height="200">';
         var imageStop= '.jpg"  title = "" width="300" height="300">';
         var audioExt="stimuli/sounds/";
 
@@ -175,7 +181,7 @@
 
         /* 
         ------------
-        GAMES
+        GAME
         ------------
         */
 
@@ -187,15 +193,224 @@
         stimuli: spaceship_parts,
         stim_height: 150,
         stim_width: 150,
-        sort_area_height: 500,
+        sort_area_height: 600,
         sort_area_width: 800,
-        stim_starts_inside: true,
+        stim_starts_inside: false,
+        column_spread_factor: 0.5,
+        scale_factor:1,
         set_background:'launch-pad-background',
         prompt: "",
-        button_label: "Next"
+        button_label: [imageStart+"next-button"+buttonStop],
         };
         
-        // timeline.push(assemble_ship,blank_screen)
+        timeline.push(assemble_ship)
+
+        // LOAD SHIP
+        
+        var luggage = ['stimuli/images/luggage-1.jpg','stimuli/images/luggage-2.jpg','stimuli/images/luggage-3.jpg']
+        
+        var pack_ship = {
+            type: jsPsychFreeSort,
+            stimuli: luggage,
+            stim_height: 150,
+            stim_width: 150,
+            sort_area_height: 600,
+            sort_area_width: 800,
+            stim_starts_inside: false,
+            column_spread_factor: 0.5,
+            scale_factor:1,
+            set_background:'launch-pad-ship-background',
+            prompt: "",
+            button_label: [imageStart+"next-button"+buttonStop],
+        };
+        
+        timeline.push(pack_ship)
+
+
+        var blank_video = {
+            type: jsPsychVideoKeyboardResponse,
+            stimulus: ['stimuli/video/blank.mp4'],
+            width:1163,
+            height:600,
+            autoplay:true,
+            rate: 1,
+            start:0,
+            controls:false,
+            trial_duration: 1,
+            trial_ends_after_video: true
+        }
+
+        timeline.push(blank_video)
+
+        // UNLOCK DOOR
+
+        for (var i = 0; i <= 5; i++) {
+            var num_pad = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                trial_duration: null,
+                response_ends_trial: true,
+                margin_veritical: ['25px'],
+                block_attribute: ['inline-block'],
+                stimulus: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
+                choices: [imageStart+'numpad-'+i.toString()+numPadStop],
+            }
+            timeline.push(num_pad)
+        }
+
+        var num_pad_end = {
+            type: jsPsychAudioButtonResponseFlexiblelocations,
+            trial_duration: 500,
+            response_ends_trial: false,
+            margin_veritical: ['25px'],
+            block_attribute: ['inline-block'],
+            stimulus: 'stimuli/sounds/games/key-6.wav',
+            choices: [imageStart+'numpad-6'+numPadStop],
+        }
+        
+        timeline.push(num_pad_end)
+
+        var door_open = {
+            type: jsPsychVideoKeyboardResponse,
+            stimulus: ['stimuli/video/door.mp4'],
+            width:1163,
+            height:600,
+            autoplay:true,
+            rate: 1,
+            start:0,
+            controls:false,
+            // choices: ['Enter'],
+            trial_ends_after_video: true
+        }
+
+        timeline.push(door_open)
+
+        // PLOT COURSE
+
+        var show_route = {
+            type: jsPsychVideoKeyboardResponse,
+            stimulus: ['stimuli/video/route.mp4'],
+            width:1162,
+            height:600,
+            autoplay:true,
+            rate: 1,
+            start:0,
+            controls:false,
+            // choices: ['Enter'],
+            trial_ends_after_video: true
+        }
+
+        timeline.push(show_route)
+
+        for (var i = 0; i <= 2; i++) {
+            var route_pad = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                trial_duration: null,
+                response_ends_trial: true,
+                margin_veritical: ['25px'],
+                block_attribute: ['inline-block'],
+                stimulus: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
+                choices: [imageStart+'route-'+i.toString()+routePadStop],
+            }
+            timeline.push(route_pad)
+        }
+
+        var route_pad_end = {
+            type: jsPsychAudioButtonResponseFlexiblelocations,
+            trial_duration: 500,
+            response_ends_trial: false,
+            margin_veritical: ['25px'],
+            block_attribute: ['inline-block'],
+            stimulus: 'stimuli/sounds/games/key-6.wav',
+            choices: [imageStart+'route-3'+routePadStop],
+        }
+        
+        timeline.push(route_pad_end)
+
+        var route_swap = {
+            type: jsPsychVideoKeyboardResponse,
+            stimulus: ['stimuli/video/route-swap.mp4'],
+            width:1162,
+            height:600,
+            autoplay:true,
+            rate: 1,
+            start:0,
+            controls:false,
+            // choices: ['Enter'],
+            trial_ends_after_video: true
+        }
+
+        timeline.push(route_swap)
+
+        for (var i = 0; i <= 2; i++) {
+            var route_pad = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                trial_duration: null,
+                response_ends_trial: true,
+                margin_veritical: ['25px'],
+                block_attribute: ['inline-block'],
+                stimulus: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
+                choices: [imageStart+'route-'+(i+4).toString()+routePadStop],
+            }
+            timeline.push(route_pad)
+        }
+
+        var route_pad_end = {
+            type: jsPsychAudioButtonResponseFlexiblelocations,
+            trial_duration: 500,
+            response_ends_trial: false,
+            margin_veritical: ['25px'],
+            block_attribute: ['inline-block'],
+            stimulus: 'stimuli/sounds/games/key-6.wav',
+            choices: [imageStart+'route-7'+routePadStop],
+        }
+        
+        timeline.push(route_pad_end)
+
+
+
+        
+        // LIFT OFF
+
+        var launch_button = {
+            type: jsPsychAudioButtonResponseFlexiblelocations,
+            // trial_duration: 500,
+            response_ends_trial: true,
+            margin_veritical: ['25px'],
+            block_attribute: ['inline-block'],
+            stimulus: 'stimuli/sounds/games/key-0.wav',
+            choices: [imageStart+'launch-button'+numPadStop],
+        }
+        
+        timeline.push(launch_button)
+
+        var launch_button_click = {
+            type: jsPsychVideoKeyboardResponse,
+            stimulus: ['stimuli/video/launch-button.mp4'],
+            width:800,
+            height:600,
+            autoplay:true,
+            rate: 1,
+            start:0,
+            controls:false,
+            // choices: ['Enter'],
+            trial_ends_after_video: true
+        }
+
+        timeline.push(launch_button_click)
+
+        var lift_off = {
+            type: jsPsychVideoKeyboardResponse,
+            stimulus: ['stimuli/video/liftoff.mp4'],
+            width:800,
+            height:800,
+            rate: 1,
+            start:0,
+            controls:false,
+            // choices: ['Enter'],
+            trial_ends_after_video: true
+        }
+
+        timeline.push(lift_off)
 
         // (150 - size/2)
        
@@ -387,7 +602,7 @@
         var ld_prompt = {
             type: jsPsychAudioButtonResponseFlexiblelocations,
             stimulus: jsPsych.timelineVariable('name'),
-            choices: [imageStart+"yes-button"+buttonStop,imageStart+"no-button"+buttonStop],
+            choices: [imageStart+"smiley-face"+squareButtonStop,imageStart+"frowny-face"+squareButtonStop],
             prompt: "",
             block_attribute: ['inline-block','inline-block'],
             response_ends_trial: jsPsych.timelineVariable('response'),
@@ -400,7 +615,58 @@
                 data.phase = phase
                 data.tr_num_disp = adjust_tr_num(jsPsych.timelineVariable('tr_num'))
                 data.correct = data.response == data.correct_response
+                if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
                 console.log(data)
+            }
+        }
+
+        var ld_feedback = {
+            type: jsPsychHtmlButtonResponseFlexiblelocations,
+            stimulus: function(){
+                var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+                if(last_trial_correct){
+                    return imageStart+'correct'+squareButtonStop
+                } else {
+                    return imageStart+'incorrect'+squareButtonStop
+                }
+            },
+            choices: [imageStart+"next-button"+buttonStop],
+            prompt: "",
+            margin_vertical: ['20px']
+        }
+
+        var ld_acc = {
+            type: jsPsychHtmlButtonResponseFlexiblelocations,
+            stimulus: function(){
+                var cur_rep = jsPsych.data.get().filter({condition:"practice"}).select('rep').max()
+                var ld_prac_n = jsPsych.data.get().filter({condition:"practice",rep:cur_rep})
+                var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
+                var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
+                // console.log("debugging...")
+                // console.log(ld_prac_n)
+                // console.log(ld_prac_correct)
+                // console.log(ld_prac_accuracy)
+                if(ld_prac_accuracy >= 50){
+                    return "Accuracy was: "+ld_prac_accuracy+"%."
+                } else {
+                    return "Accuracy was: "+ld_prac_accuracy+"%. Let's practice some more."
+                }
+            },
+            choices: [imageStart+"next-button"+buttonStop],
+            prompt: "",
+            margin_vertical: ['20px']
+        }
+
+        var show_ld_acc = {
+            timeline: [ld_acc],
+            conditional_function: function() {
+                var cur_rep = jsPsych.data.get().filter({condition:"practice"}).select('rep').max()
+                var ld_prac_n = jsPsych.data.get().filter({condition:"practice",rep:cur_rep}).count()
+                if(ld_prac_n == 6) { 
+                    return true
+                } else {
+                    return false
+                }
             }
         }
 
@@ -413,8 +679,9 @@
         var preload_1 = {
             type: jsPsychPreload,
             auto_preload: true,
-            images: ['/stimuli/images/A1.jpg','/stimuli/images/A3.jpg','/stimuli/images/A33.jpg','/stimuli/images/B2.jpg','/stimuli/images/B23.jpg','/stimuli/images/C31.jpg','/stimuli/images/E1.jpg','/stimuli/images/E3.jpg','/stimuli/images/G3.jpg','/stimuli/images/I1.jpg','/stimuli/images/J2.jpg','/stimuli/images/J3.jpg'],
+            // images: ['/stimuli/images/A1.jpg','/stimuli/images/A3.jpg','/stimuli/images/A33.jpg','/stimuli/images/B2.jpg','/stimuli/images/B23.jpg','/stimuli/images/C31.jpg','/stimuli/images/E1.jpg','/stimuli/images/E3.jpg','/stimuli/images/G3.jpg','/stimuli/images/I1.jpg','/stimuli/images/J2.jpg','/stimuli/images/J3.jpg'],
             // audio: ['stimuli/sounds/teaching/chev.wav','stimuli/sounds/teaching/darg.wav','stimuli/sounds/teaching/foob.wav','stimuli/sounds/teaching/gazzer.wav','stimuli/sounds/teaching/heab.wav','stimuli/sounds/teaching/juss.wav','stimuli/sounds/teaching/koba.wav','stimuli/sounds/teaching/kulp.wav','stimuli/sounds/teaching/modi.wav','stimuli/sounds/teaching/pyzer.wav','stimuli/sounds/teaching/sarl.wav','stimuli/sounds/teaching/wilp.wav'],
+            imeags: preload_stims[0]['images'].split(',').slice(0,-1), 
             audio: preload_stims[0]['audio'].split(',').slice(0,-1),
             conditional_function: function() {
                 if(phase == 1 | phase == 2) {
@@ -424,11 +691,10 @@
                 }
             },
             on_error: function(file) {
-                console.log(preload_stims[0]['audio'].split(','))
                 console.log('Error: ',file);
             },
             on_success: function(file) {
-                console.log('Loaded: ',file);
+                // console.log('Loaded: ',file);
             },
 
         }
@@ -676,6 +942,83 @@
         ASSEMBLE LEXICAL DECISION TRIALS
         --------------------------------
         */
+
+
+        // Complete 6 practice trials with feedback
+        // Repeat once more if accuracy < 50%
+
+        var prac_trials = [
+        {word:'cat.wav',correct_response:0},
+        {word:'wat.wav',correct_response:1},
+        {word:'habby.wav',correct_response:1},
+        {word:'happy.wav',correct_response:0},
+        {word:'run.wav',correct_response:0},
+        {word:'rin.wav',correct_response:1}]
+
+        var do_practice = true;
+
+        for (var loop = 1; loop < 3; loop ++) {
+
+            for (var i = 0; i < prac_trials.length; i++) {
+            var ld_prac_trial = {
+                timeline: [blank_screen,ld_prompt,ld_feedback,show_ld_acc],
+                timeline_variables:[
+                    {name: '/stimuli/sounds/LD/'+prac_trials[i]['word'],
+                    response: true,
+                    tr_dur: 10000,
+                    data: {set:1,rep:loop,condition:'practice',correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
+                    }
+                ],
+                conditional_function: function() {
+
+                    var cur_rep = jsPsych.data.get().filter({condition:"practice"}).select('rep').max()
+                    var ld_prac_n = jsPsych.data.get().filter({condition:"practice",rep:cur_rep})
+                    var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
+                    var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
+
+                    if(ld_prac_n.count()==6 & ld_prac_accuracy >= 50) {do_practice = false}
+
+                    if(phase == 4 & do_practice) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            timeline.push(ld_prac_trial)
+        }
+    }
+
+        
+        // for (var i = 0; i < prac_trials.length; i++) {
+        //     var ld_prac_trial = {
+        //         timeline: [blank_screen,ld_prompt,ld_feedback,ld_acc],
+        //         timeline_variables:[
+        //             {name: '/stimuli/sounds/LD/'+prac_trials[i]['word'],
+        //             response: true,
+        //             tr_dur: 10000,
+        //             data: {set:1,rep:loop,condition:'practice',correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
+        //             }
+        //         ],
+        //         conditional_function: function() {
+        //             if(phase == 4) {
+        //                 return true;
+        //             } else {
+        //                 return false;
+        //             }
+        //         }
+        //     }
+        //     timeline.push(ld_prac_trial)
+        // }
+        
+        // timeline.push(ld_acc)
+
+        // let ld_prac_correct = jsPsych.data.get().last(6).filter({condition:"practice",correct:true})
+        // let ld_prac_accuracy = Math.round(ld_prac_correct.count()/6*100)
+        // if (ld_prac_accuracy >= 50) {repeat_ld_prac = false}
+
+
+
 
         var cur_trials = ld_trials.filter(function(trial){return trial.set === 1})
 

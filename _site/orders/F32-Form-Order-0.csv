@@ -1,0 +1,9 @@
+week,order,alien,set,tr_num,form_tr_num,condition,block,rep,name,target,sound1,sound2,sound3,correct_response
+1,1,1,1,25,1,high,1,1,juss,L,juss,guss,vuss,0
+1,1,1,1,26,2,low,1,1,sarl,R,farl,parl,sarl,2
+1,1,1,1,27,3,high,2,2,pyzer,L,pyzer,pyver,pyber,0
+1,1,1,1,28,4,low,1,2,sarl,L,sarl,parl,farl,0
+2,1,1,2,25,1,low,2,1,chev,R,chel,chez,chev,2
+2,1,1,2,26,2,high,1,1,darg,L,darg,marg,barg,0
+2,1,1,2,27,3,high,2,2,heab,L,heab,heag,hean,0
+2,1,1,2,28,4,high,1,2,darg,R,barg,marg,darg,2

@@ -79,6 +79,9 @@ var jsPsychHtmlKeyboardResponse = (function (jspsych) {
 
         // RON
         document.body.style.backgroundImage = "url('stimuli/images/"+trial.set_background+".jpg')"
+        document.body.style.backgroundSize = "auto"
+        document.body.style.backgroundPosition = "center"
+        document.body.style.backgroundRepeat = "no-repeat"
 
           var new_html = '<div id="jspsych-html-keyboard-response-stimulus">' + trial.stimulus + "</div>";
           // add prompt
