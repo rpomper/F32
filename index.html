@@ -24,17 +24,18 @@
             jsPsych.data.displayData('json');
         }
     });
-    
-    // teaching_URL = "/orders/F32-Teaching-Order-1.csv"
-    // recall_URL = "/orders/F32-Recall-Order-1.csv"
-    // form_URL = "/orders/F32-Form-Order-1.csv"
-    // link_URL = "/orders/F32-Link-Order-1.csv"
-    // ld_URL = "/orders/F32-LD-Order-1.csv"
-    teaching_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Teaching-Order-1.csv'
-    recall_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Recall-Order-1.csv'
-    form_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Form-Order-1.csv'
-    link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-1.csv'
-    ld_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-LD-Order-1.csv'
+
+    var subject_id = jsPsych.data.getURLVariable('sub')
+    var trial_order = jsPsych.data.getURLVariable('order')
+    var filter_week = jsPsych.data.getURLVariable('week')
+    let today = new Date()
+    var DoT = {"month":today.getMonth()+1,"day":today.getDate(),"year":today.getFullYear(),"hour":today.getHours(),"min":today.getMinutes()}
+
+    teaching_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Teaching-Order-'+trial_order.toString()+'.csv'
+    recall_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Recall-Order-'+trial_order.toString()+'.csv'
+    form_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Form-Order-'+trial_order.toString()+'.csv'
+    link_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-Link-Order-'+trial_order.toString()+'.csv'
+    ld_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-LD-Order-'+trial_order.toString()+'.csv'
     preload_URL = 'https://raw.githubusercontent.com/rpomper/F32/main/orders/F32-preload.csv'
 
     
@@ -51,18 +52,6 @@
             loadTeachingTrials(preload_stims);
         }
     })
-    
-    // Papa.parse(teaching_URL, {
-    //     download: true,
-    //     header: true,
-    //     dynamicTyping: true,
-    //     complete: function(results) {
-    //         var teaching_trials = results.data
-    //         console.log("Teaching:")
-    //         console.log(teaching_trials)
-    //         loadRecallTrials(teaching_trials);
-    //     }
-    // })
 
     function loadTeachingTrials(preload_stims) {
         Papa.parse(teaching_URL, {
@@ -70,7 +59,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var teaching_trials = results.data
+                var teaching_trials = results.data.filter(function(subset){return subset.week == filter_week})
                 console.log("Teaching:")
                 console.log(teaching_trials)
                 loadRecallTrials(preload_stims,teaching_trials);
@@ -84,7 +73,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var recall_trials = results.data
+                var recall_trials = results.data.filter(function(subset){return subset.week == filter_week})
                 console.log("Recall:")
                 console.log(recall_trials)
                 loadFormTrials(preload_stims,teaching_trials,recall_trials)
@@ -98,7 +87,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var form_trials = results.data
+                var form_trials = results.data.filter(function(subset){return subset.week == filter_week})
                 console.log("Form:")
                 console.log(form_trials)
                 loadLinkTrials(preload_stims,teaching_trials,recall_trials,form_trials)
@@ -112,7 +101,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var link_trials = results.data
+                var link_trials = results.data.filter(function(subset){return subset.week == filter_week})
                 console.log("Link:")
                 console.log(link_trials)
                 loadLDTrials(preload_stims,teaching_trials,recall_trials,form_trials,link_trials)
@@ -126,7 +115,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var ld_trials = results.data
+                var ld_trials = results.data.filter(function(subset){return subset.week == filter_week})
                 console.log("LD:")
                 console.log(ld_trials)
                 startExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials)
@@ -150,7 +139,6 @@
         var choose_phase = {
             type: jsPsychHtmlButtonResponseFlexiblelocations,
             stimulus: "Choose phase:",
-            // choices: ['<p style="font-size:48px; color:red;">1</p>', '<p style="font-size:48px; color:green;">2</p>', '<p style="font-size:48px; color:blue;">3</p>','<p style="font-size:48px; color:orange;">4</p>'],
             choices: [imageStart+"1"+numButtonStop,imageStart+"2"+numButtonStop,imageStart+"3"+numButtonStop,imageStart+"4"+numButtonStop],
             prompt: "",
             block_attribute: ['inline-block','inline-block','block','inline-block'],
@@ -185,254 +173,316 @@
         ------------
         */
 
-       // ASSEMBLE SHIP
-       var spaceship_parts = ['stimuli/images/spaceship-1.jpg','stimuli/images/spaceship-2.jpg','stimuli/images/spaceship-3.jpg']
-       
-       var assemble_ship = {
-        type: jsPsychFreeSort,
-        stimuli: spaceship_parts,
-        stim_height: 150,
-        stim_width: 150,
-        sort_area_height: 600,
-        sort_area_width: 800,
-        stim_starts_inside: false,
-        column_spread_factor: 0.5,
-        scale_factor:1,
-        set_background:'launch-pad-background',
-        prompt: "",
-        button_label: [imageStart+"next-button"+buttonStop],
-        };
+        function play_game(){
+
+            // READY SHIP
+            var spaceship_parts = ['stimuli/images/spaceship-1.jpg','stimuli/images/spaceship-2.jpg','stimuli/images/spaceship-3.jpg']
         
-        timeline.push(assemble_ship)
+            var assemble_ship = {
+                type: jsPsychFreeSort,
+                stimuli: spaceship_parts,
+                stim_height: 150,
+                stim_width: 150,
+                sort_area_height: 600,
+                sort_area_width: 800,
+                stim_starts_inside: false,
+                column_spread_factor: 0.5,
+                scale_factor:1,
+                set_background:'launch-pad-background',
+                prompt: "",
+                button_label: [imageStart+"next-button"+buttonStop]
+            }
 
-        // LOAD SHIP
-        
-        var luggage = ['stimuli/images/luggage-1.jpg','stimuli/images/luggage-2.jpg','stimuli/images/luggage-3.jpg']
-        
-        var pack_ship = {
-            type: jsPsychFreeSort,
-            stimuli: luggage,
-            stim_height: 150,
-            stim_width: 150,
-            sort_area_height: 600,
-            sort_area_width: 800,
-            stim_starts_inside: false,
-            column_spread_factor: 0.5,
-            scale_factor:1,
-            set_background:'launch-pad-ship-background',
-            prompt: "",
-            button_label: [imageStart+"next-button"+buttonStop],
-        };
-        
-        timeline.push(pack_ship)
+            var luggage = ['stimuli/images/luggage-1.jpg','stimuli/images/luggage-2.jpg','stimuli/images/luggage-3.jpg']
+            
+            var pack_ship = {
+                type: jsPsychFreeSort,
+                stimuli: luggage,
+                stim_height: 150,
+                stim_width: 150,
+                sort_area_height: 600,
+                sort_area_width: 800,
+                stim_starts_inside: false,
+                column_spread_factor: 0.5,
+                scale_factor:1,
+                set_background:'launch-pad-ship-background',
+                prompt: "",
+                button_label: [imageStart+"next-button"+buttonStop],
+            };
+
+            var blank_video = {
+                type: jsPsychVideoKeyboardResponse,
+                stimulus: ['stimuli/video/blank.mp4'],
+                width:1163,
+                height:600,
+                autoplay:true,
+                rate: 1,
+                start:0,
+                controls:false,
+                trial_duration: 1,
+                trial_ends_after_video: true
+            }
+
+            var ready_ship = {
+                timeline:[assemble_ship,pack_ship,blank_video],
+                conditional_function: function() {
+                    if(phase == 1 | phase == 2) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
+
+            timeline.push(ready_ship)
 
 
-        var blank_video = {
-            type: jsPsychVideoKeyboardResponse,
-            stimulus: ['stimuli/video/blank.mp4'],
-            width:1163,
-            height:600,
-            autoplay:true,
-            rate: 1,
-            start:0,
-            controls:false,
-            trial_duration: 1,
-            trial_ends_after_video: true
-        }
+            // UNLOCK DOOR
 
-        timeline.push(blank_video)
-
-        // UNLOCK DOOR
-
-        for (var i = 0; i <= 5; i++) {
             var num_pad = {
                 type: jsPsychAudioButtonResponseFlexiblelocations,
                 trial_duration: null,
                 response_ends_trial: true,
                 margin_veritical: ['25px'],
                 block_attribute: ['inline-block'],
-                stimulus: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
-                choices: [imageStart+'numpad-'+i.toString()+numPadStop],
+                stimulus: jsPsych.timelineVariable('sound'),
+                choices: jsPsych.timelineVariable('image')
             }
-            timeline.push(num_pad)
-        }
 
-        var num_pad_end = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            trial_duration: 500,
-            response_ends_trial: false,
-            margin_veritical: ['25px'],
-            block_attribute: ['inline-block'],
-            stimulus: 'stimuli/sounds/games/key-6.wav',
-            choices: [imageStart+'numpad-6'+numPadStop],
-        }
-        
-        timeline.push(num_pad_end)
 
-        var door_open = {
-            type: jsPsychVideoKeyboardResponse,
-            stimulus: ['stimuli/video/door.mp4'],
-            width:1163,
-            height:600,
-            autoplay:true,
-            rate: 1,
-            start:0,
-            controls:false,
-            // choices: ['Enter'],
-            trial_ends_after_video: true
-        }
+            for (var i = 0; i <= 5; i++) {
+                var num_pad_entry = {
+                    timeline:[num_pad],
+                    timeline_variables:[
+                        {
+                            sound: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
+                            image: [imageStart+'numpad-'+i.toString()+numPadStop]
+                        }
+                    ],
+                    conditional_function: function() {
+                        if(phase == 1 | phase == 2) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }
+                timeline.push(num_pad_entry)
+            }
 
-        timeline.push(door_open)
+            var num_pad_end = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                trial_duration: 500,
+                response_ends_trial: false,
+                margin_veritical: ['25px'],
+                block_attribute: ['inline-block'],
+                stimulus: 'stimuli/sounds/games/key-6.wav',
+                choices: [imageStart+'numpad-6'+numPadStop],
+            }
 
-        // PLOT COURSE
+            var door_open = {
+                type: jsPsychVideoKeyboardResponse,
+                stimulus: ['stimuli/video/door.mp4'],
+                width:1163,
+                height:600,
+                autoplay:true,
+                rate: 1,
+                start:0,
+                controls:false,
+                // choices: ['Enter'],
+                trial_ends_after_video: true
+            }
 
-        var show_route = {
-            type: jsPsychVideoKeyboardResponse,
-            stimulus: ['stimuli/video/route.mp4'],
-            width:1162,
-            height:600,
-            autoplay:true,
-            rate: 1,
-            start:0,
-            controls:false,
-            // choices: ['Enter'],
-            trial_ends_after_video: true
-        }
+            var unlock_door = {
+                timeline:[num_pad_end,door_open],
+                conditional_function: function() {
+                    if(phase == 1 | phase == 2) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
 
-        timeline.push(show_route)
+            timeline.push(unlock_door)
 
-        for (var i = 0; i <= 2; i++) {
+
+            // PLOT COURSE
+
+            var display_route_vid = {
+                type: jsPsychVideoKeyboardResponse,
+                stimulus: ['stimuli/video/route.mp4'],
+                width:1162,
+                height:600,
+                autoplay:true,
+                rate: 1,
+                start:0,
+                controls:false,
+                // choices: ['Enter'],
+                trial_ends_after_video: true
+            }
+
+            var play_display_route_vid = {
+                timeline: [display_route_vid],
+                conditional_function: function() {
+                    if(phase == 1 | phase == 2) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
+            timeline.push(play_display_route_vid)
+
             var route_pad = {
                 type: jsPsychAudioButtonResponseFlexiblelocations,
-                trial_duration: null,
+                trial_duration: jsPsych.timelineVariable('dur'),
+                response_ends_trial: jsPsych.timelineVariable('resp'),
+                margin_veritical: ['25px'],
+                block_attribute: ['inline-block'],
+                stimulus: jsPsych.timelineVariable('sound'),
+                choices: jsPsych.timelineVariable('image')
+            }
+
+            for (var i = 0; i <= 3; i++) {
+                if(i==3){
+                    var obj = {
+                        dur: 500,
+                        resp: false,
+                        sound: 'stimuli/sounds/games/key-6.wav',
+                        image: [imageStart+'route-'+i.toString()+routePadStop]
+                    }
+                } else {
+                    var obj = {
+                        dur: null,
+                        resp: true,
+                        sound: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
+                        image: [imageStart+'route-'+i.toString()+routePadStop]
+                    }
+                }
+                var route_pad_entries = {
+                    timeline:[route_pad],
+                    timeline_variables:[obj],
+                    conditional_function: function() {
+                        if(phase == 1 | phase == 2) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }
+                timeline.push(route_pad_entries)
+            }
+
+            var display_shift_vid = {
+                type: jsPsychVideoKeyboardResponse,
+                stimulus: ['stimuli/video/route-swap.mp4'],
+                width:1162,
+                height:600,
+                autoplay:true,
+                rate: 1,
+                start:0,
+                controls:false,
+                // choices: ['Enter'],
+                trial_ends_after_video: true
+            }
+
+            var play_display_route_vid = {
+                timeline: [display_shift_vid],
+                conditional_function: function() {
+                    if(phase == 1 | phase == 2) {
+                        return true
+                    } else {
+                        return false
+                    }
+                } 
+            }
+
+            timeline.push(play_display_route_vid)
+
+            for (var i = 0; i <= 3; i++) {
+                if(i==3){
+                    var obj = {
+                        dur: 500,
+                        resp: false,
+                        sound: 'stimuli/sounds/games/key-6.wav',
+                        image: [imageStart+'route-'+(i+4).toString()+routePadStop]
+                    }
+                } else {
+                    var obj = {
+                        dur: null,
+                        resp: true,
+                        sound: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
+                        image: [imageStart+'route-'+(i+4).toString()+routePadStop]
+                    }
+                }
+                var route_pad_entries = {
+                    timeline:[route_pad],
+                    timeline_variables:[obj],
+                    conditional_function: function() {
+                        if(phase == 1 | phase == 2) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }
+                timeline.push(route_pad_entries)
+            }
+            
+            // LIFT OFF
+
+            var launch_button = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                // trial_duration: 500,
                 response_ends_trial: true,
                 margin_veritical: ['25px'],
                 block_attribute: ['inline-block'],
-                stimulus: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
-                choices: [imageStart+'route-'+i.toString()+routePadStop],
+                stimulus: 'stimuli/sounds/games/key-0.wav',
+                choices: [imageStart+'launch-button'+numPadStop],
             }
-            timeline.push(route_pad)
-        }
-
-        var route_pad_end = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            trial_duration: 500,
-            response_ends_trial: false,
-            margin_veritical: ['25px'],
-            block_attribute: ['inline-block'],
-            stimulus: 'stimuli/sounds/games/key-6.wav',
-            choices: [imageStart+'route-3'+routePadStop],
-        }
-        
-        timeline.push(route_pad_end)
-
-        var route_swap = {
-            type: jsPsychVideoKeyboardResponse,
-            stimulus: ['stimuli/video/route-swap.mp4'],
-            width:1162,
-            height:600,
-            autoplay:true,
-            rate: 1,
-            start:0,
-            controls:false,
-            // choices: ['Enter'],
-            trial_ends_after_video: true
-        }
-
-        timeline.push(route_swap)
-
-        for (var i = 0; i <= 2; i++) {
-            var route_pad = {
-                type: jsPsychAudioButtonResponseFlexiblelocations,
-                trial_duration: null,
-                response_ends_trial: true,
-                margin_veritical: ['25px'],
-                block_attribute: ['inline-block'],
-                stimulus: 'stimuli/sounds/games/key-'+i.toString()+'.wav',
-                choices: [imageStart+'route-'+(i+4).toString()+routePadStop],
+            
+            var launch_button_click = {
+                type: jsPsychVideoKeyboardResponse,
+                stimulus: ['stimuli/video/launch-button.mp4'],
+                width:800,
+                height:600,
+                autoplay:true,
+                rate: 1,
+                start:0,
+                controls:false,
+                // choices: ['Enter'],
+                trial_ends_after_video: true
             }
-            timeline.push(route_pad)
+
+            var lift_off_video = {
+                type: jsPsychVideoKeyboardResponse,
+                stimulus: ['stimuli/video/liftoff.mp4'],
+                width:800,
+                height:800,
+                rate: 1,
+                start:0,
+                controls:false,
+                // choices: ['Enter'],
+                trial_ends_after_video: true
+            }
+
+            var lift_off = {
+                timeline: [launch_button,launch_button_click,lift_off_video],
+                conditional_function: function() {
+                    if(phase == 1 | phase == 2) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
+
+            timeline.push(lift_off)
+
         }
 
-        var route_pad_end = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            trial_duration: 500,
-            response_ends_trial: false,
-            margin_veritical: ['25px'],
-            block_attribute: ['inline-block'],
-            stimulus: 'stimuli/sounds/games/key-6.wav',
-            choices: [imageStart+'route-7'+routePadStop],
-        }
-        
-        timeline.push(route_pad_end)
-
-
-
-        
-        // LIFT OFF
-
-        var launch_button = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            // trial_duration: 500,
-            response_ends_trial: true,
-            margin_veritical: ['25px'],
-            block_attribute: ['inline-block'],
-            stimulus: 'stimuli/sounds/games/key-0.wav',
-            choices: [imageStart+'launch-button'+numPadStop],
-        }
-        
-        timeline.push(launch_button)
-
-        var launch_button_click = {
-            type: jsPsychVideoKeyboardResponse,
-            stimulus: ['stimuli/video/launch-button.mp4'],
-            width:800,
-            height:600,
-            autoplay:true,
-            rate: 1,
-            start:0,
-            controls:false,
-            // choices: ['Enter'],
-            trial_ends_after_video: true
-        }
-
-        timeline.push(launch_button_click)
-
-        var lift_off = {
-            type: jsPsychVideoKeyboardResponse,
-            stimulus: ['stimuli/video/liftoff.mp4'],
-            width:800,
-            height:800,
-            rate: 1,
-            start:0,
-            controls:false,
-            // choices: ['Enter'],
-            trial_ends_after_video: true
-        }
-
-        timeline.push(lift_off)
-
-        // (150 - size/2)
-       
-        var sample_function = function(param){
-            var size = 1 + Math.floor(param*250);
-            var html = '<div style="display: block; margin: auto; height: 300px; width: 300px; position: relative;">'+
-                '<div style="display: block; position: absolute; bottom: '+0+'px; left:100px; background-color: #FFFF; '+
-                'width: 100px; height: '+size+'px;"></div></div><p>Press "up" to make the square larger. Press "down" to make the square smaller.</p>'+
-                '<p>When the square is the same size as the previous one, click Continue.</p>';
-                return html;}
-
-        var reconstruction = {
-            type: jsPsychReconstruction,
-            stim_function: sample_function,
-            starting_value: 0.01,
-            key_increase: "ArrowUp",
-            key_decrease: "ArrowDown"
-        }
-
-        // timeline.push(reconstruction)
-
-
+        // play_game()
 
         /* 
         ---------------------
@@ -447,28 +497,36 @@
                 // no adjustment is necessary
         // when phase = 2,
             // children will repeat the same teaching trials again, so add 
-                // teaching_trials.filter(function(trial){return trial.set === 1}).length
+                // teaching_trials.length
             // children will complete the test trials after that 2nd repetition of teaching, so also add
-                // teaching_trials.filter(function(trial){return trial.set === 1}).length
+                // teaching_trials.length
         // when phase = 3, 
             // it is the beginning of the second day
             // children will first complete the test trials without any preceding teaching trials, so subtract
-                // teaching_trials.filter(function(trial){return trial.set === 1}).length
+                // teaching_trials.length
         // when phase = 4,
             // children will complete the lexical decision trials after the test trials, so also subtract 
-                // teaching_trials.filter(function(trial){return trial.set === 1}).length
+                // teaching_trials.length
 
 
         function adjust_tr_num(tr_num_order) {
 
             // var tr_num_order = jsPsych.timelineVariable('tr_num')
 
-            if (phase==2) {
-                var tr_num_adj = teaching_trials.filter(function(trial){return trial.set === 1}).length
-            } else if (phase == 3 || phase == 4) {
-                var tr_num_adj = - teaching_trials.filter(function(trial){return trial.set === 1}).length
-            } else {
+            // if (phase==2) {
+            //     var tr_num_adj = teaching_trials.length
+            //     // var tr_num_adj = teaching_trials.filter(function(trial){return trial.set === 1}).length
+            // } else if (phase == 3 || phase == 4) {
+            //     var tr_num_adj = - teaching_trials.length
+            //     // var tr_num_adj = - teaching_trials.filter(function(trial){return trial.set === 1}).length
+            // } else {
+            //     var tr_num_adj = 0
+            // }
+
+            if (phase==1) {
                 var tr_num_adj = 0
+            } else {
+                var tr_num_adj = teaching_trials.length
             }
             
             var tr_num_final = tr_num_order + tr_num_adj
@@ -681,7 +739,7 @@
             auto_preload: true,
             // images: ['/stimuli/images/A1.jpg','/stimuli/images/A3.jpg','/stimuli/images/A33.jpg','/stimuli/images/B2.jpg','/stimuli/images/B23.jpg','/stimuli/images/C31.jpg','/stimuli/images/E1.jpg','/stimuli/images/E3.jpg','/stimuli/images/G3.jpg','/stimuli/images/I1.jpg','/stimuli/images/J2.jpg','/stimuli/images/J3.jpg'],
             // audio: ['stimuli/sounds/teaching/chev.wav','stimuli/sounds/teaching/darg.wav','stimuli/sounds/teaching/foob.wav','stimuli/sounds/teaching/gazzer.wav','stimuli/sounds/teaching/heab.wav','stimuli/sounds/teaching/juss.wav','stimuli/sounds/teaching/koba.wav','stimuli/sounds/teaching/kulp.wav','stimuli/sounds/teaching/modi.wav','stimuli/sounds/teaching/pyzer.wav','stimuli/sounds/teaching/sarl.wav','stimuli/sounds/teaching/wilp.wav'],
-            imeags: preload_stims[0]['images'].split(',').slice(0,-1), 
+            images: preload_stims[0]['images'].split(',').slice(0,-1), 
             audio: preload_stims[0]['audio'].split(',').slice(0,-1),
             conditional_function: function() {
                 if(phase == 1 | phase == 2) {
@@ -701,26 +759,27 @@
 
         timeline.push(preload_1)
 
-        var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
+        // var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
+        var cur_trials = teaching_trials
 
         for (var i = 0; i < cur_trials.length; i++) {
 
             // break between teaching blocks
             if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
-                var game_break = {
-                    timeline: [assemble_ship,blank_screen,break_screen],
-                    timeline_variables:[
-                        {break_message: "<p style='font-size:70px;'>Click the button below when you are ready to continue</p>"}
-                    ],
-                    conditional_function: function() {
-                        if(phase == 1 | phase == 2) {
-                            return true
-                        } else {
-                            return false
-                        }
-                    }
-                }
-                timeline.push(game_break)
+                // var game_break = {
+                //     timeline: [assemble_ship,blank_screen,break_screen],
+                //     timeline_variables:[
+                //         {break_message: "<p style='font-size:70px;'>Click the button below when you are ready to continue</p>"}
+                //     ],
+                //     conditional_function: function() {
+                //         if(phase == 1 | phase == 2) {
+                //             return true
+                //         } else {
+                //             return false
+                //         }
+                //     }
+                // }
+                // timeline.push(game_break)
             }
 
             var cur_tr_num = cur_trials[i]['tr_num']
@@ -787,9 +846,29 @@
         // if Phase = 2, testing is on day 1 and preceded by teaching trials, so tr_num is correct
         // if Phase = 3, testing is on day 2 and _not_ preceded by teaching trials, so tr_num
 
-        var cur_trials = recall_trials.filter(function(trial){return trial.set === 1})
+        // var cur_trials = recall_trials.filter(function(trial){return trial.set === 1})
+        var cur_trials = recall_trials
 
         for (var i = 0; i < cur_trials.length; i++) {
+
+            // break between recall blocks
+            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+                var recall_break = {
+                    timeline: [break_screen],
+                    timeline_variables:[
+                        {break_message: "<p style='font-size:70px;'>Great job! Let's take a break. </p>"}
+                    ],
+                    conditional_function: function() {
+                        if(phase == 2 | phase == 3) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }
+                timeline.push(recall_break)
+            }
+            
 
             var cur_tr_num = cur_trials[i]['tr_num']
             var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
@@ -823,9 +902,28 @@
         --------------------
         */
 
-        var cur_trials = form_trials.filter(function(trial){return trial.set === 1})
+        // var cur_trials = form_trials.filter(function(trial){return trial.set === 1})
+        var cur_trials = form_trials
 
         for (var i = 0; i < cur_trials.length; i++) {
+
+            // break between link blocks
+            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+                var form_break = {
+                    timeline: [break_screen],
+                    timeline_variables:[
+                        {break_message: "<p style='font-size:70px;'>Great job! Let's take a break. </p>"}
+                    ],
+                    conditional_function: function() {
+                        if(phase == 2 | phase == 3) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }
+                timeline.push(form_break)
+            }
 
             var cur_tr_num = cur_trials[i]['tr_num']
             var dot = imageStart+"dot"+numButtonStop
@@ -899,9 +997,28 @@
         ----------------------
         */
 
-        var cur_trials = link_trials.filter(function(trial){return trial.set === 1})
+        // var cur_trials = link_trials.filter(function(trial){return trial.set === 1})
+        var cur_trials = link_trials
 
         for (var i = 0; i < cur_trials.length; i++) {
+
+            // break between link blocks
+            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+                var link_break = {
+                    timeline: [break_screen],
+                    timeline_variables:[
+                        {break_message: "<p style='font-size:70px;'>Great job! Let's take a break. </p>"}
+                    ],
+                    conditional_function: function() {
+                        if(phase == 2 | phase == 3) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }
+                timeline.push(link_break)
+            }
 
             var cur_tr_num = cur_trials[i]['tr_num']
 
@@ -1020,7 +1137,8 @@
 
 
 
-        var cur_trials = ld_trials.filter(function(trial){return trial.set === 1})
+        // var cur_trials = ld_trials.filter(function(trial){return trial.set === 1})
+        var cur_trials = ld_trials
 
         for (var i = 0; i < cur_trials.length; i++) {
             
@@ -1029,7 +1147,7 @@
                 var ld_break = {
                     timeline: [break_screen],
                     timeline_variables:[
-                        {break_message: "<p style='font-size:70px;'>2-min game break </p>"}
+                        {break_message: "<p style='font-size:70px;'>Great job! Let's take a break. </p>"}
                     ],
                     conditional_function: function() {
                         if(phase == 4) {
