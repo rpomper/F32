@@ -1,4 +1,4 @@
-week,order,alien,set,tr_num,link_tr_num,block_tr_num,block,condition,teaching_block,name,alien,target,top_left,top_right,bot_center,correct_response
+week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,link_tr_num,block_tr_num,block,condition,teaching_block,name,alien,target,top_left,top_right,bot_center,correct_response
 1,1,2,1,67,1,1,1,high,1,koba,G3,L,G3,E1,A3,0
 1,1,2,1,68,2,2,1,high,2,pyzer,A3,C,E1,A3,G3,2
 1,1,2,1,69,3,3,1,low,2,foob,J3,L,J3,A33,C31,0
