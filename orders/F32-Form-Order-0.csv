@@ -1,4 +1,4 @@
-week,order,alien,set,tr_num,form_tr_num,block_tr_num,block,condition,teaching_block,name,target,sound1,sound2,sound3,correct_response
+week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,form_tr_num,block_tr_num,block,condition,teaching_block,name,target,sound1,sound2,sound3,correct_response
 1,1,1,1,25,1,1,1,high,1,juss,L,juss,guss,vuss,0
 1,1,1,1,26,2,2,1,low,1,sarl,R,farl,parl,sarl,2
 1,1,1,1,27,3,1,2,high,2,pyzer,L,pyzer,pyver,pyber,0
