@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>webpack App</title>
+  </head>
+  <body>
+    <script>
+        function postToRedcap(body) {
+            // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch
+            return fetch("https://study.boystown.org/api/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    Accept: "application/json",
+                },
+            body: body,
+            });
+        }
+
+        function uploadToRedcap(token) {
+            postToRedcap("token=" + token + "&content=generateNextRecordName")
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (text) {
+                    const id = text;
+                    postToRedcap(
+                        "token=" +
+                            token +
+                            "&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=false&data=[" +
+                            JSON.stringify({record_id: 1, subject_num: 1, date: "3.20.23", order: 1, week: 1, phase: 4,
+                                results_form: "form",
+                                results_link: "link",
+                                results_ld:"ld"
+                            }) +
+                            // data_export+
+                            "]&returnContent=count&returnFormat=json"
+                    );
+                });
+        }
+
+        uploadToRedcap("D988A480A47E17456634FDA91DB82408")
+    </script>
+  </body>
+</html>
+
