@@ -1,8 +1,8 @@
 week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,link_tr_num,block_tr_num,block,condition,teaching_block,name,alien,target,top_left,top_right,bot_center,correct_response
-1,1,1,1,29,1,1,1,high,2,pyzer,C31,C,J3,C31,A33,2
+1,1,1,1,29,1,1,1,high,2,pyzer,C31,R,J3,C31,A33,1
 1,1,1,1,30,2,2,1,low,2,foob,E1,L,E1,G3,A3,0
 1,1,1,1,31,3,1,2,high,1,juss,J3,L,J3,C31,A33,0
-1,1,1,1,32,4,2,2,high,2,pyzer,C31,R,A33,J3,C31,1
+1,1,1,1,32,4,2,2,high,2,pyzer,C31,C,A33,J3,C31,2
 2,1,1,2,29,1,1,1,low,2,chev,A1,R,J2,A1,B23,1
 2,1,1,2,30,2,2,1,high,1,darg,E3,R,I1,E3,B2,1
 2,1,1,2,31,3,1,2,high,1,darg,E3,L,E3,B2,I1,0
