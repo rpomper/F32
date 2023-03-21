@@ -1237,7 +1237,7 @@
                 var ld_prac_trial = {
                     timeline: [blank_screen,ld_prompt,ld_feedback,show_ld_acc],
                     timeline_variables:[
-                        {name: '/stimuli/sounds/LD/'+prac_trials[i]['word'],
+                        {name: '/stimuli/sounds/LD/'+prac_trials[i]['word']+'.wav',
                         response: true,
                         tr_dur: 10000,
                         data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
