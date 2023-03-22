@@ -314,7 +314,7 @@
             var mae_before_game = {
                 timeline: [mae_screen],
                 timeline_variables:[
-                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Let's play a game. We are going to help Mae travel through space. </p>",
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Let's play a game. We are going to help Mae travel through space. </p>",
                     choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
@@ -638,7 +638,7 @@
             var mae_after_game = {
                 timeline: [mae_screen],
                 timeline_variables:[
-                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends. </p>",
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to some of her alien friends. </p>",
                     choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
@@ -846,6 +846,8 @@
 
         timeline.push(preload_1)
 
+        play_game()
+
         // var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
         var cur_trials = teaching_trials
 
@@ -853,7 +855,25 @@
 
             // break between teaching blocks
             if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
-                play_game()
+                // play_game()
+
+                var mae_teaching_break = {
+                    timeline: [mae_screen],
+                    timeline_variables:[
+                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends. </p>",
+                        choices: [imageStart+"next-button"+buttonStop]}
+                    ],
+                    conditional_function: function() {
+                        if(phase == 1 | phase == 2) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }
+
+                timeline.push(mae_teaching_break)
+
             }
 
             // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
