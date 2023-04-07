@@ -182,6 +182,32 @@
         var imageStop= '.jpg"  title = "" width="300" height="300">';
         var audioExt="stimuli/sounds/";
 
+        var preload_stimuli = {
+            type: jsPsychPreload,
+            auto_preload: true,
+            // images: ['/stimuli/images/A1.jpg','/stimuli/images/A3.jpg','/stimuli/images/A33.jpg','/stimuli/images/B2.jpg','/stimuli/images/B23.jpg','/stimuli/images/C31.jpg','/stimuli/images/E1.jpg','/stimuli/images/E3.jpg','/stimuli/images/G3.jpg','/stimuli/images/I1.jpg','/stimuli/images/J2.jpg','/stimuli/images/J3.jpg'],
+            // audio: ['stimuli/sounds/teaching/chev.wav','stimuli/sounds/teaching/darg.wav','stimuli/sounds/teaching/foob.wav','stimuli/sounds/teaching/gazzer.wav','stimuli/sounds/teaching/heab.wav','stimuli/sounds/teaching/juss.wav','stimuli/sounds/teaching/koba.wav','stimuli/sounds/teaching/kulp.wav','stimuli/sounds/teaching/modi.wav','stimuli/sounds/teaching/pyzer.wav','stimuli/sounds/teaching/sarl.wav','stimuli/sounds/teaching/wilp.wav'],
+            images: preload_stims[0]['images'].split(',').slice(0,-1), 
+            audio: preload_stims[0]['audio'].split(',').slice(0,-1),
+            video: preload_stims[0]['video'].split(',').slice(0,-1),
+            conditional_function: function() {
+                if(phase == 1 | phase == 2 | phase == 3 | phase == 4) {
+                    return true
+                } else {
+                    return false
+                }
+            },
+            on_error: function(file) {
+                console.log('Error: ',file);
+            },
+            on_success: function(file) {
+                // console.log('Loaded: ',file);
+            },
+
+        }
+
+        timeline.push(preload_stimuli)
+
         var choose_phase = {
             type: jsPsychHtmlButtonResponseFlexiblelocations,
             stimulus: "Choose phase:",
@@ -280,28 +306,6 @@
             prompt: "",
             margin_vertical:['20px']
         }
-        
-        /* 
-        ------------
-        INSTRUCTIONS
-        ------------
-        */
-
-        var mae_start = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>This is Mae. She is an astronaut! <br><br> Mae will introduce you to some of her alien friends. </p>",
-                choices: [imageStart+"start-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                    if(phase == 1 | phase == 2) {
-                        return true
-                    } else {
-                        return false
-                    }
-            }
-        }
-        timeline.push(mae_start)
 
         /* 
         ------------
@@ -314,11 +318,11 @@
             var mae_before_game = {
                 timeline: [mae_screen],
                 timeline_variables:[
-                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Let's play a game. We are going to help Mae travel through space. </p>",
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>This is Mae. She is an astronaut. We are going to help Mae travel through space. </p>",
                     choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
-                    if(phase == 1 | phase == 2) {
+                    if(phase == 1) {
                         return true
                     } else {
                         return false
@@ -380,7 +384,7 @@
             var ready_ship = {
                 timeline:[assemble_ship,pack_ship,blank_video],
                 conditional_function: function() {
-                    if(phase == 1 | phase == 2) {
+                    if(phase == 1) {
                         return true
                     } else {
                         return false
@@ -414,7 +418,7 @@
                         }
                     ],
                     conditional_function: function() {
-                        if(phase == 1 | phase == 2) {
+                        if(phase == 1) {
                             return true
                         } else {
                             return false
@@ -450,7 +454,7 @@
             var unlock_door = {
                 timeline:[num_pad_end,door_open],
                 conditional_function: function() {
-                    if(phase == 1 | phase == 2) {
+                    if(phase == 1) {
                         return true
                     } else {
                         return false
@@ -479,7 +483,7 @@
             var play_display_route_vid = {
                 timeline: [display_route_vid],
                 conditional_function: function() {
-                    if(phase == 1 | phase == 2) {
+                    if(phase == 1) {
                         return true
                     } else {
                         return false
@@ -518,7 +522,7 @@
                     timeline:[route_pad],
                     timeline_variables:[obj],
                     conditional_function: function() {
-                        if(phase == 1 | phase == 2) {
+                        if(phase == 1) {
                             return true
                         } else {
                             return false
@@ -544,7 +548,7 @@
             var play_display_route_vid = {
                 timeline: [display_shift_vid],
                 conditional_function: function() {
-                    if(phase == 1 | phase == 2) {
+                    if(phase == 1) {
                         return true
                     } else {
                         return false
@@ -574,7 +578,7 @@
                     timeline:[route_pad],
                     timeline_variables:[obj],
                     conditional_function: function() {
-                        if(phase == 1 | phase == 2) {
+                        if(phase == 1) {
                             return true
                         } else {
                             return false
@@ -624,7 +628,7 @@
             var lift_off = {
                 timeline: [launch_button,launch_button_click,lift_off_video],
                 conditional_function: function() {
-                    if(phase == 1 | phase == 2) {
+                    if(phase == 1) {
                         return true
                     } else {
                         return false
@@ -638,11 +642,11 @@
             var mae_after_game = {
                 timeline: [mae_screen],
                 timeline_variables:[
-                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to some of her alien friends. </p>",
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to some of her alien friends.<br><br>She will teach you the names of 3 different kinds of aliens. <br>Your job is to learn what we call these kinds of aliens and what they look like.<br><br> Sometimes Mae will ask you what they are called. <br>You are meeting these aliens for the first time, so we do not expect you to remember them all. Just say what you remember. It is ok to guess! </p>",
                     choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
-                    if(phase == 1 | phase == 2) {
+                    if(phase == 1) {
                         return true
                     } else {
                         return false
@@ -653,6 +657,30 @@
             timeline.push(mae_after_game)
 
         }
+
+        play_game()
+
+        /* 
+        ------------
+        INSTRUCTIONS
+        ------------
+        */
+
+        var mae_start = {
+            timeline: [mae_screen],
+            timeline_variables:[
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Mae will show you some of her alien friends from before.<br><br>This will give you more practice learning what we call them and what they look like. </p>",
+                choices: [imageStart+"start-button"+buttonStop]}
+            ],
+            conditional_function: function() {
+                    if(phase == 2) {
+                        return true
+                    } else {
+                        return false
+                    }
+            }
+        }
+        timeline.push(mae_start)
 
         /* 
         ---------------------
@@ -821,33 +849,6 @@
         ------------------------
         */
 
-        var preload_1 = {
-            type: jsPsychPreload,
-            auto_preload: true,
-            // images: ['/stimuli/images/A1.jpg','/stimuli/images/A3.jpg','/stimuli/images/A33.jpg','/stimuli/images/B2.jpg','/stimuli/images/B23.jpg','/stimuli/images/C31.jpg','/stimuli/images/E1.jpg','/stimuli/images/E3.jpg','/stimuli/images/G3.jpg','/stimuli/images/I1.jpg','/stimuli/images/J2.jpg','/stimuli/images/J3.jpg'],
-            // audio: ['stimuli/sounds/teaching/chev.wav','stimuli/sounds/teaching/darg.wav','stimuli/sounds/teaching/foob.wav','stimuli/sounds/teaching/gazzer.wav','stimuli/sounds/teaching/heab.wav','stimuli/sounds/teaching/juss.wav','stimuli/sounds/teaching/koba.wav','stimuli/sounds/teaching/kulp.wav','stimuli/sounds/teaching/modi.wav','stimuli/sounds/teaching/pyzer.wav','stimuli/sounds/teaching/sarl.wav','stimuli/sounds/teaching/wilp.wav'],
-            images: preload_stims[0]['images'].split(',').slice(0,-1), 
-            audio: preload_stims[0]['audio'].split(',').slice(0,-1),
-            conditional_function: function() {
-                if(phase == 1 | phase == 2) {
-                    return true
-                } else {
-                    return false
-                }
-            },
-            on_error: function(file) {
-                console.log('Error: ',file);
-            },
-            on_success: function(file) {
-                // console.log('Loaded: ',file);
-            },
-
-        }
-
-        timeline.push(preload_1)
-
-        play_game()
-
         // var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
         var cur_trials = teaching_trials
 
@@ -860,7 +861,7 @@
                 var mae_teaching_break = {
                     timeline: [mae_screen],
                     timeline_variables:[
-                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends. </p>",
+                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends.<br>She will teach you the names of 3 new kinds of aliens.<br>Remember your job is to learn what they are called and what they look like. </p>",
                         choices: [imageStart+"next-button"+buttonStop]}
                     ],
                     conditional_function: function() {
@@ -930,6 +931,40 @@
                 timeline.push(retrieve_trial)
             }
         }
+
+        var mae_teaching_end_1 = {
+            timeline: [mae_screen],
+            timeline_variables:[
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's play a different game.<br><br> We will come back to Mae and her alien friends again soon! </p>",
+                choices: [imageStart+"next-button"+buttonStop]}
+            ],
+            conditional_function: function() {
+                if(phase == 1) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        timeline.push(mae_teaching_end_1)
+
+        var mae_teaching_end_2 = {
+            timeline: [mae_screen],
+            timeline_variables:[
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's take a break to color.<br><br> We will come back to Mae and her alien friends again soon! </p>",
+                choices: [imageStart+"next-button"+buttonStop]}
+            ],
+            conditional_function: function() {
+                if(phase == 2) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        timeline.push(mae_teaching_end_2)
 
 
         /*
@@ -1212,6 +1247,40 @@
             timeline.push(link_trial)
         }
 
+        var mae_testing_end_2 = {
+            timeline: [mae_screen],
+            timeline_variables:[
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job!<br><br> You are all done for today! </p>",
+                choices: [imageStart+"next-button"+buttonStop]}
+            ],
+            conditional_function: function() {
+                if(phase == 2) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        timeline.push(mae_testing_end_2)
+
+        var mae_testing_end_3 = {
+            timeline: [mae_screen],
+            timeline_variables:[
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's play a different game.<br><br> We will come back to Mae and her alien friends again soon! </p>",
+                choices: [imageStart+"next-button"+buttonStop]}
+            ],
+            conditional_function: function() {
+                if(phase == 3) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        timeline.push(mae_testing_end_3)
+
 
         /*
         --------------------------------
@@ -1255,7 +1324,8 @@
 
             for (var i = 0; i < prac_trials.length; i++) {
                 var ld_prac_trial = {
-                    timeline: [blank_screen,ld_prompt,ld_feedback,show_ld_acc],
+                    timeline: [blank_screen,ld_prompt,ld_feedback],
+                    // timeline: [blank_screen,ld_prompt,ld_feedback,show_ld_acc],
                     timeline_variables:[
                         {name: audioExt+"LD/"+prac_trials[i]['word'],
                         response: true,
@@ -1284,36 +1354,6 @@
             }
         }
 
-        
-        // for (var i = 0; i < prac_trials.length; i++) {
-        //     var ld_prac_trial = {
-        //         timeline: [blank_screen,ld_prompt,ld_feedback,ld_acc],
-        //         timeline_variables:[
-        //             {name: '/stimuli/sounds/LD/'+prac_trials[i]['word'],
-        //             response: true,
-        //             tr_dur: 10000,
-        //             data: {set:1,rep:loop,condition:'practice',correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
-        //             }
-        //         ],
-        //         conditional_function: function() {
-        //             if(phase == 4) {
-        //                 return true;
-        //             } else {
-        //                 return false;
-        //             }
-        //         }
-        //     }
-        //     timeline.push(ld_prac_trial)
-        // }
-        
-        // timeline.push(ld_acc)
-
-        // let ld_prac_correct = jsPsych.data.get().last(6).filter({condition:"practice",correct:true})
-        // let ld_prac_accuracy = Math.round(ld_prac_correct.count()/6*100)
-        // if (ld_prac_accuracy >= 50) {repeat_ld_prac = false}
-
-        // var cur_trials = ld_trials.filter(function(trial){return trial.set === 1})
-
         var ld_start = {
             timeline: [mae_screen],
             timeline_variables:[
@@ -1335,10 +1375,12 @@
             
             // break between ld blocks
             if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+
                 var ld_break = {
-                    timeline: [break_screen],
+                    timeline: [mae_screen],
                     timeline_variables:[
-                        {break_message: "<p style='font-size:70px;'>Great job! Let's take a break. </p>"}
+                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:30px;'>Great job! Let's take a break to color.<br><br> We will come back to Mae and her alien friends again soon! </p>",
+                        choices: [imageStart+"next-button"+buttonStop]}
                     ],
                     conditional_function: function() {
                         if(phase == 4) {
@@ -1346,7 +1388,7 @@
                         } else {
                             return false
                         }
-                    }
+                    },
                 }
                 timeline.push(ld_break)
             }
@@ -1378,6 +1420,24 @@
             timeline.push(ld_trial)
         }
 
+        var ld_end = {
+            timeline: [mae_screen],
+            timeline_variables:[
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:30px;'>Great job!<br><br> You are all done for today! </p>",
+                choices: [imageStart+"next-button"+buttonStop]}
+            ],
+            conditional_function: function() {
+                if(phase == 4) {
+                    return true
+                } else {
+                    return false
+                }
+            },
+        }
+                
+        timeline.push(ld_end)
+        
+
     return timeline
 
     }
@@ -1385,9 +1445,6 @@
     function startExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials) {
         jsPsych.run(createExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials))
     }
-
-    // RON: add code to tag trial type in the data saved for each trial (right now it's just audio-button-response, etc.)
-    // RON: add code to preload images and sounds
 
   </script>
 </html>
