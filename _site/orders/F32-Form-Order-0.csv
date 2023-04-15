@@ -5,5 +5,5 @@ week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,form_tr
 1,1,1,1,28,4,2,2,low,1,sarl,L,sarl,parl,farl,0
 2,1,1,2,25,1,1,1,low,2,chev,R,chel,chez,chev,2
 2,1,1,2,26,2,2,1,high,1,darg,L,darg,marg,barg,0
-2,1,1,2,27,3,1,2,high,2,heab,L,heab,heag,hean,0
+2,1,1,2,27,3,1,2,high,2,hibe,L,hibe,hige,hine,0
 2,1,1,2,28,4,2,2,high,1,darg,R,barg,marg,darg,2

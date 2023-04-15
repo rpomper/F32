@@ -15,11 +15,11 @@ week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,link_tr
 2,2,1,2,68,2,2,1,high,1,darg,E1,R,A3,E1,I1,1
 2,2,1,2,69,3,3,1,low,1,foob,B23,C,A33,J2,B23,2
 2,2,1,2,70,4,4,1,high,2,koba,I1,L,I1,A3,E1,0
-2,2,1,2,71,5,5,1,high,2,heab,A3,C,E1,I1,A3,2
+2,2,1,2,71,5,5,1,high,2,hibe,A3,C,E1,I1,A3,2
 2,2,1,2,72,6,6,1,low,1,kulp,J2,L,J2,B23,A33,0
 2,2,1,2,73,7,1,2,high,1,darg,E1,L,E1,I1,A3,0
 2,2,1,2,74,8,2,2,low,2,sarl,A33,L,A33,J2,B23,0
 2,2,1,2,75,9,3,2,high,2,koba,I1,C,A3,E1,I1,2
 2,2,1,2,76,10,4,2,low,1,foob,B23,R,J2,B23,A33,1
 2,2,1,2,77,11,5,2,low,1,kulp,J2,C,B23,A33,J2,2
-2,2,1,2,78,12,6,2,high,2,heab,A3,R,I1,A3,E1,1
+2,2,1,2,78,12,6,2,high,2,hibe,A3,R,I1,A3,E1,1

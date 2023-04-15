@@ -14,12 +14,12 @@ week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,recall_
 1,1,2,2,43,1,1,1,1,high,darg,A1,3000
 1,1,2,2,44,2,2,1,2,low,chev,E3,3000
 1,1,2,2,45,3,3,1,1,low,gazzer,I1,3000
-1,1,2,2,46,4,4,1,2,high,heab,J2,3000
+1,1,2,2,46,4,4,1,2,high,hibe,J2,3000
 1,1,2,2,47,5,5,1,2,high,wilp,B23,3000
 1,1,2,2,48,6,6,1,1,low,kulp,B2,3000
 1,1,2,2,49,7,1,2,2,high,wilp,B23,3000
 1,1,2,2,50,8,2,2,1,low,kulp,B2,3000
 1,1,2,2,51,9,3,2,1,low,gazzer,I1,3000
-1,1,2,2,52,10,4,2,2,high,heab,J2,3000
+1,1,2,2,52,10,4,2,2,high,hibe,J2,3000
 1,1,2,2,53,11,5,2,2,low,chev,E3,3000
 1,1,2,2,54,12,6,2,1,high,darg,A1,3000

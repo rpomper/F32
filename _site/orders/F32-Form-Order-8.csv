@@ -14,10 +14,10 @@ week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,form_tr
 1,2,2,2,55,1,1,1,low,2,sarl,R,parl,farl,sarl,2
 1,2,2,2,56,2,2,1,high,1,darg,L,darg,marg,barg,0
 1,2,2,2,57,3,3,1,low,1,foob,L,foob,soob,koob,0
-1,2,2,2,58,4,4,1,high,2,heab,C,hean,heab,heag,1
+1,2,2,2,58,4,4,1,high,2,hibe,C,hine,hibe,hige,1
 1,2,2,2,59,5,5,1,low,1,kulp,C,tulp,kulp,fulp,1
 1,2,2,2,60,6,6,1,high,2,koba,R,koga,koza,koba,2
-1,2,2,2,61,7,1,2,high,2,heab,L,heab,heag,hean,0
+1,2,2,2,61,7,1,2,high,2,hibe,L,hibe,hige,hine,0
 1,2,2,2,62,8,2,2,high,1,darg,R,barg,marg,darg,2
 1,2,2,2,63,9,3,2,low,2,sarl,C,farl,sarl,parl,1
 1,2,2,2,64,10,4,2,low,1,kulp,L,kulp,fulp,tulp,0

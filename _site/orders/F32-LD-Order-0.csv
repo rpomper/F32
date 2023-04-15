@@ -5,9 +5,9 @@ week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,ld_tr_n
 1,1,1,1,36,4,1,2,high,juss,novel,jusp,1
 1,1,1,1,37,5,2,2,low,foob,novel,foog,1
 1,1,1,1,38,6,3,2,high,pyzer,novel,nizer,1
-2,1,1,2,33,1,1,1,high,heab,familiar,hob,0
+2,1,1,2,33,1,1,1,high,hibe,familiar,hie,0
 2,1,1,2,34,2,2,1,low,gazzer,novel,tazzer,1
 2,1,1,2,35,3,3,1,low,chev,novel,chep,1
 2,1,1,2,36,4,1,2,high,darg,familiar,darn,0
 2,1,1,2,37,5,2,2,low,gazzer,familiar,lazar,0
-2,1,1,2,38,6,3,2,high,heab,familiar,hub,0
+2,1,1,2,38,6,3,2,high,hibe,familiar,herb,0
