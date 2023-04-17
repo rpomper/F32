@@ -1,4 +1,4 @@
-week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,recall_tr_num,block_tr_num,block,teaching_block,condition,name,audio,tr_dur
+week,order_counterbalance,alien_counterbalance,set_counterbalance,tr_num,recall_tr_num,block_tr_num,block,teaching_block,condition,audio,alien,tr_dur
 1,2,1,1,43,1,1,1,1,low,chev,G3,3000
 1,2,1,1,44,2,2,1,2,high,pyzer,J3,3000
 1,2,1,1,45,3,3,1,2,low,gazzer,B2,3000

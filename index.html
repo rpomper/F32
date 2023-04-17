@@ -1124,7 +1124,8 @@
                     var allow_response = true
                     // var cur_data = {set:cur_trials[i]['set'],rep:cur_trials[i]['rep'],block:cur_trials[i]['block'],condition:cur_trials[i]['condition'],tr_num_form:cur_trials[i]['form_tr_num'],target:cur_trials[i]['name'],target_loc:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
                     var cur_data = {week:cur_trials[i]['week'],order_counterbalance:cur_trials[i]['order_counterbalance'],alien_counterbalance:cur_trials[i]['alien_counterbalance'],set_counterbalance:cur_trials[i]['set_counterbalance'],block:cur_trials[i]['block'],tr_num_form:cur_trials[i]['form_tr_num'],condition:cur_trials[i]['condition'],teaching_block:cur_trials[i]['teaching_block'],name:cur_trials[i]['name'],target:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
-                    var cur_dur = 10000
+                    // var cur_dur = 10000
+                    var cur_dur = null
                 } else {
                     var allow_response = false
                     var cur_data = {}
@@ -1232,7 +1233,8 @@
                     name: cur_name,
                     aliens: cur_aliens,
                     response: true,
-                    tr_dur: 10000,
+                    // tr_dur: 10000,
+                    tr_dur: null,
                     data: cur_data
                     }
                 ],
@@ -1329,7 +1331,8 @@
                     timeline_variables:[
                         {name: audioExt+"LD/"+prac_trials[i]['word'],
                         response: true,
-                        tr_dur: 10000,
+                        // tr_dur: 10000,
+                        tr_dur: null,
                         data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
                         }
                     ],
@@ -1405,7 +1408,8 @@
                     {tr_num: cur_tr_num,
                     name: cur_name,
                     response: true,
-                    tr_dur: 10000,
+                    // tr_dur: 10000,
+                    tr_dur: null,
                     data: cur_data
                     }
                 ],
