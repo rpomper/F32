@@ -179,6 +179,7 @@
         var routePadStop= '.jpg"  title = "" width="1162" height="600">'
         var buttonStop= '.jpg"  title = "" width="100" height="50">';
         var squareButtonStop = '.jpg"  title = "" width="200" height="200">';
+        var emojiButtonStop= '.jpg"  title = "" width="200" height="364">';
         var imageStop= '.jpg"  title = "" width="300" height="300">';
         var audioExt="stimuli/sounds/";
 
@@ -774,22 +775,52 @@
         var ld_prompt = {
             type: jsPsychAudioButtonResponseFlexiblelocations,
             stimulus: jsPsych.timelineVariable('name'),
-            choices: [imageStart+"smiley-face"+squareButtonStop,imageStart+"frowny-face"+squareButtonStop],
+            choices: [imageStart+"smiley-face"+squareButtonStop,imageStart+"frowny-face"+squareButtonStop,imageStart+"replay-button"+numButtonStop],
             prompt: "",
-            block_attribute: ['inline-block','inline-block'],
+            block_attribute: ['inline-block','inline-block','block'],
             response_ends_trial: jsPsych.timelineVariable('response'),
             trial_duration: jsPsych.timelineVariable('tr_dur'),
             grid_attribute: false,
-            margin_vertical: ['10px'],
+            margin_vertical: ['30px'],
             margin_horizontal: ['100px'],
             data: jsPsych.timelineVariable('data'),
             on_finish: function(data){
                 data.phase = phase
                 data.test_tr_type = 'test_ld'
                 // data.tr_num_disp = cur_tr_num
+                if (data.response == 2) {
+                    data.repeated = 'yes'
+                    data.correct = null
+                    data.accuracy = null
+                } else {
+                    data.repeated = 'no'
+                    data.correct = data.response == data.correct_response
+                    if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
+                }
+                console.log(data)
+            }
+        }
+
+        var ld_prompt_repeat = {
+            type: jsPsychAudioButtonResponseFlexiblelocations,
+            stimulus: jsPsych.timelineVariable('name'),
+            choices: [imageStart+"smiley-face-long"+emojiButtonStop,imageStart+"frowny-face-long"+emojiButtonStop],
+            prompt: "",
+            block_attribute: ['inline-block','inline-block'],
+            response_ends_trial: jsPsych.timelineVariable('response'),
+            trial_duration: jsPsych.timelineVariable('tr_dur'),
+            grid_attribute: true,
+            margin_vertical: ['30px'],
+            margin_horizontal: ['100px'],
+            data: jsPsych.timelineVariable('data'),
+            on_finish: function(data){
+                data.phase = phase
+                data.test_tr_type = 'test_ld'
+                // data.tr_num_disp = cur_tr_num
+                data.repeated = 'no'
                 data.correct = data.response == data.correct_response
                 if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
-                // console.log(data)
+                console.log(data)
             }
         }
 
@@ -797,6 +828,7 @@
             type: jsPsychHtmlButtonResponseFlexiblelocations,
             stimulus: function(){
                 var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+                console.log(last_trial_correct)
                 if(last_trial_correct){
                     return imageStart+'correct'+squareButtonStop
                 } else {
@@ -1326,7 +1358,7 @@
 
             for (var i = 0; i < prac_trials.length; i++) {
                 var ld_prac_trial = {
-                    timeline: [blank_screen,ld_prompt,ld_feedback],
+                    timeline: [blank_screen,ld_prompt],
                     // timeline: [blank_screen,ld_prompt,ld_feedback,show_ld_acc],
                     timeline_variables:[
                         {name: audioExt+"LD/"+prac_trials[i]['word'],
@@ -1339,10 +1371,10 @@
                     conditional_function: function() {
 
                         var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                        var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep})
+                        var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
                         var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
                         var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
-                        // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
+                        console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
 
                         if(ld_prac_n.count()==6 & ld_prac_accuracy >= 50) {do_practice = false}
 
@@ -1354,6 +1386,58 @@
                     }
                 }
                 timeline.push(ld_prac_trial)
+
+                var ld_prac_trial_repeat = {
+                    timeline: [ld_prompt_repeat],
+                    timeline_variables:[
+                        {name: audioExt+"LD/"+prac_trials[i]['word'],
+                        response: true,
+                        // tr_dur: 10000,
+                        tr_dur: null,
+                        data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
+                        }
+                    ],
+                    conditional_function: function() {
+
+                        var replay = jsPsych.data.get().last(1).select('response')['values'] == 2
+
+                        var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
+                        var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
+                        var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
+                        var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
+                        // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
+
+                        if(ld_prac_n.count()==6 & ld_prac_accuracy >= 50) {do_practice = false}
+
+                        if(phase == 4 && do_practice && replay) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+                timeline.push(ld_prac_trial_repeat)
+
+                var ld_prac_feedback = {
+                    timeline: [ld_feedback],
+                    // timeline_variables:[{data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']}}], // ron update to pull set from global variable set by URL}
+                    conditional_function: function() {
+                        var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
+                        var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
+                        var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
+                        var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
+                        // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
+
+                        if(ld_prac_n.count()==6 & ld_prac_accuracy >= 50) {do_practice = false}
+
+                        if(phase == 4 && do_practice) {
+                            return true;
+                        } else {
+                            return false;
+                        }    
+                    }
+                }
+                timeline.push(ld_prac_feedback)
             }
         }
 
@@ -1422,6 +1506,29 @@
                 }
             }
             timeline.push(ld_trial)
+
+            var ld_trial_repeat = {
+                timeline: [ld_prompt_repeat],
+                timeline_variables:[
+                    {tr_num: cur_tr_num,
+                    name: cur_name,
+                    response: true,
+                    // tr_dur: 10000,
+                    tr_dur: null,
+                    data: cur_data
+                    }
+                ],
+                conditional_function: function() {
+                    var replay = jsPsych.data.get().last(1).select('response')['values'] == 2
+                    if(phase == 4 && replay) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            timeline.push(ld_trial_repeat)
+
         }
 
         var ld_end = {
