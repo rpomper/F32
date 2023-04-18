@@ -886,7 +886,7 @@
             // study trial
             if (cur_trials[i]['tr_type']=='study'){
                 var study_trial = {
-                    timeline: [show_trial_num,blank_screen,study_prompt,click_advance],
+                    timeline: [show_trial_num,blank_screen,study_prompt],
                     timeline_variables:[
                         {tr_num: cur_tr_num,
                         alien: [cur_alien,imageStart+"blank-button"+buttonStop],
@@ -947,7 +947,7 @@
             }
         }
 
-        timeline.push(mae_teaching_end_1)
+        // timeline.push(mae_teaching_end_1)
 
         var mae_teaching_end_2 = {
             timeline: [mae_screen],
@@ -1264,7 +1264,7 @@
             }
         }
 
-        timeline.push(mae_testing_end_2)
+        // timeline.push(mae_testing_end_2)
 
         var mae_testing_end_3 = {
             timeline: [mae_screen],
@@ -1281,7 +1281,7 @@
             }
         }
 
-        timeline.push(mae_testing_end_3)
+        // timeline.push(mae_testing_end_3)
 
 
         /*
@@ -1439,7 +1439,7 @@
             },
         }
                 
-        timeline.push(ld_end)
+        // timeline.push(ld_end)
         
 
     return timeline
