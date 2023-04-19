@@ -797,7 +797,7 @@
                     data.correct = data.response == data.correct_response
                     if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
                 }
-                console.log(data)
+                // console.log(data)
             }
         }
 
@@ -820,7 +820,7 @@
                 data.repeated = 'no'
                 data.correct = data.response == data.correct_response
                 if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
-                console.log(data)
+                // console.log(data)
             }
         }
 
@@ -1374,7 +1374,7 @@
                         var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
                         var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
                         var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
-                        console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
+                        // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
 
                         if(ld_prac_n.count()==6 & ld_prac_accuracy >= 50) {do_practice = false}
 
