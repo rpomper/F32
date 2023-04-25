@@ -271,17 +271,17 @@
             return tr_num_final
         }
 
-        var show_trial_num = {
-            type:jsPsychHtmlKeyboardResponse,
-            trial_duration:500,
-            response_ends_trial: false,
-            stimulus: function() {
-                return "<p style='font-size:90px; color:black;'>"+adjust_tr_num(jsPsych.timelineVariable('tr_num')).toString()+"</p>"
-                // return "<p style='font-size:90px;'>"+jsPsych.timelineVariable('tr_num').toString()+"</p>"
-            },
-            prompt:"",
-            choices: ['Enter']
-        }
+        // var show_trial_num = {
+        //     type:jsPsychHtmlKeyboardResponse,
+        //     trial_duration:500,
+        //     response_ends_trial: false,
+        //     stimulus: function() {
+        //         return "<p style='font-size:90px; color:black;'>"+adjust_tr_num(jsPsych.timelineVariable('tr_num')).toString()+"</p>"
+        //         // return "<p style='font-size:90px;'>"+jsPsych.timelineVariable('tr_num').toString()+"</p>"
+        //     },
+        //     prompt:"",
+        //     choices: ['Enter']
+        // }
 
         var blank_screen = {
             type:jsPsychHtmlKeyboardResponse,
@@ -918,7 +918,7 @@
             // study trial
             if (cur_trials[i]['tr_type']=='study'){
                 var study_trial = {
-                    timeline: [show_trial_num,blank_screen,study_prompt],
+                    timeline: [blank_screen,study_prompt],
                     timeline_variables:[
                         {tr_num: cur_tr_num,
                         alien: [cur_alien,imageStart+"blank-button"+buttonStop],
@@ -942,7 +942,7 @@
             // retrieve trial
             if (cur_trials[i]['tr_type']=='retrieve') {
                 var retrieve_trial = {
-                    timeline: [show_trial_num,blank_screen,retrieve_prompt,click_advance],
+                    timeline: [blank_screen,retrieve_prompt,click_advance],
                     timeline_variables:[
                         {tr_num: cur_tr_num,
                         alien: [cur_alien,imageStart+"blank-button"+buttonStop],
@@ -1057,7 +1057,7 @@
             var cur_dur = cur_trials[i]['tr_dur']
 
             var retrieve_trial = {
-                timeline: [show_trial_num,blank_screen,retrieve_prompt,click_advance],
+                timeline: [blank_screen,retrieve_prompt,click_advance],
                 timeline_variables:[
                     {tr_num: cur_tr_num,
                     alien: [cur_alien,imageStart+"blank-button"+buttonStop],
@@ -1167,7 +1167,7 @@
                 // show the trial number followed by a blank screen before the 1st step
                 // but not before the 2nd and 3rd step
                 if (j == 1) {
-                    var cur_timeline = [show_trial_num,blank_screen,form_prompt]
+                    var cur_timeline = [blank_screen,form_prompt]
                 } else {
                     var cur_timeline = [form_prompt]
                 }
@@ -1259,7 +1259,7 @@
             var cur_data = {week:cur_trials[i]['week'],order_counterbalance:cur_trials[i]['order_counterbalance'],alien_counterbalance:cur_trials[i]['alien_counterbalance'],set_counterbalance:cur_trials[i]['set_counterbalance'],block:cur_trials[i]['block'],tr_num_link:cur_trials[i]['link_tr_num'],condition:cur_trials[i]['condition'],teaching_block:cur_trials[i]['teaching_block'],name:cur_trials[i]['name'],alien:cur_trials[i]['alien'],target:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
 
             var link_trial = {
-                timeline: [show_trial_num,blank_screen,link_prompt],
+                timeline: [blank_screen,link_prompt],
                 timeline_variables:[
                     {tr_num: cur_tr_num,
                     name: cur_name,
@@ -1487,7 +1487,7 @@
             var cur_data = {week:cur_trials[i]['week'],order_counterbalance:cur_trials[i]['order_counterbalance'],set_counterbalance:cur_trials[i]['set_counterbalance'],block:cur_trials[i]['block'],tr_num_ld:cur_trials[i]['ld_tr_num'],condition:cur_trials[i]['condition'],target:cur_trials[i]['name'],type:cur_trials[i]['type'],neighbor:cur_trials[i]['neighbor'],correct_response:cur_trials[i]['correct_response']}
 
             var ld_trial = {
-                timeline: [show_trial_num,blank_screen,ld_prompt],
+                timeline: [blank_screen,ld_prompt],
                 timeline_variables:[
                     {tr_num: cur_tr_num,
                     name: cur_name,
