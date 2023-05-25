@@ -182,6 +182,8 @@
         var emojiButtonStop= '.jpg"  title = "" width="200" height="364">';
         var imageStop= '.jpg"  title = "" width="300" height="300">';
         var audioExt="stimuli/sounds/";
+        keep_coloring = true
+
 
         var preload_stimuli = {
             type: jsPsychPreload,
@@ -244,44 +246,44 @@
             children will complete the lexical decision trials after the test trials, so also subtract teaching_trials.length
         */
 
-        function adjust_tr_num(tr_num_order) {
+        // function adjust_tr_num(tr_num_order) {
 
-            // var tr_num_order = jsPsych.timelineVariable('tr_num')
+        //     // var tr_num_order = jsPsych.timelineVariable('tr_num')
 
-            // if (phase==2) {
-            //     var tr_num_adj = teaching_trials.length
-            //     // var tr_num_adj = teaching_trials.filter(function(trial){return trial.set === 1}).length
-            // } else if (phase == 3 || phase == 4) {
-            //     var tr_num_adj = - teaching_trials.length
-            //     // var tr_num_adj = - teaching_trials.filter(function(trial){return trial.set === 1}).length
-            // } else {
-            //     var tr_num_adj = 0
-            // }
+        //     // if (phase==2) {
+        //     //     var tr_num_adj = teaching_trials.length
+        //     //     // var tr_num_adj = teaching_trials.filter(function(trial){return trial.set === 1}).length
+        //     // } else if (phase == 3 || phase == 4) {
+        //     //     var tr_num_adj = - teaching_trials.length
+        //     //     // var tr_num_adj = - teaching_trials.filter(function(trial){return trial.set === 1}).length
+        //     // } else {
+        //     //     var tr_num_adj = 0
+        //     // }
 
-            if (global_phase.phase==1) {
-                var tr_num_adj = 0
-            } else if (global_phase.phase==2){
-                var tr_num_adj = teaching_trials.length
-            } else {
-                var tr_num_adj = -teaching_trials.length
-            }
+        //     if (global_phase.phase==1) {
+        //         var tr_num_adj = 0
+        //     } else if (global_phase.phase==2){
+        //         var tr_num_adj = teaching_trials.length
+        //     } else {
+        //         var tr_num_adj = -teaching_trials.length
+        //     }
 
-            var tr_num_final = tr_num_order + tr_num_adj
+        //     var tr_num_final = tr_num_order + tr_num_adj
 
-            return tr_num_final
-        }
+        //     return tr_num_final
+        // }
 
-        var show_trial_num = {
-            type:jsPsychHtmlKeyboardResponse,
-            trial_duration:500,
-            response_ends_trial: false,
-            stimulus: function() {
-                return "<p style='font-size:90px; color:black;'>"+adjust_tr_num(jsPsych.timelineVariable('tr_num')).toString()+"</p>"
-                // return "<p style='font-size:90px;'>"+jsPsych.timelineVariable('tr_num').toString()+"</p>"
-            },
-            prompt:"",
-            choices: ['Enter']
-        }
+        // var show_trial_num = {
+        //     type:jsPsychHtmlKeyboardResponse,
+        //     trial_duration:500,
+        //     response_ends_trial: false,
+        //     stimulus: function() {
+        //         return "<p style='font-size:90px; color:black;'>"+adjust_tr_num(jsPsych.timelineVariable('tr_num')).toString()+"</p>"
+        //         // return "<p style='font-size:90px;'>"+jsPsych.timelineVariable('tr_num').toString()+"</p>"
+        //     },
+        //     prompt:"",
+        //     choices: ['Enter']
+        // }
 
         var blank_screen = {
             type:jsPsychHtmlKeyboardResponse,
@@ -306,6 +308,19 @@
             choices: jsPsych.timelineVariable('choices'),
             prompt: "",
             margin_vertical:['20px']
+        }
+
+        var mae_timer = {
+            type: jsPsychHtmlButtonResponseFlexiblelocations,
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            trial_duration: 60000,
+            choices: jsPsych.timelineVariable('choices'),
+            prompt: "",
+            margin_vertical:['20px'],
+            on_finish: function(data){
+                // console.log(data.response)
+                if (data.response == 0) {keep_coloring = false}
+            }
         }
 
         /* 
@@ -797,7 +812,7 @@
                     data.correct = data.response == data.correct_response
                     if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
                 }
-                console.log(data)
+                // console.log(data)
             }
         }
 
@@ -820,7 +835,7 @@
                 data.repeated = 'no'
                 data.correct = data.response == data.correct_response
                 if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
-                console.log(data)
+                // console.log(data)
             }
         }
 
@@ -828,7 +843,7 @@
             type: jsPsychHtmlButtonResponseFlexiblelocations,
             stimulus: function(){
                 var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
-                console.log(last_trial_correct)
+                // console.log(last_trial_correct)
                 if(last_trial_correct){
                     return imageStart+'correct'+squareButtonStop
                 } else {
@@ -918,7 +933,7 @@
             // study trial
             if (cur_trials[i]['tr_type']=='study'){
                 var study_trial = {
-                    timeline: [show_trial_num,blank_screen,study_prompt],
+                    timeline: [blank_screen,study_prompt],
                     timeline_variables:[
                         {tr_num: cur_tr_num,
                         alien: [cur_alien,imageStart+"blank-button"+buttonStop],
@@ -942,7 +957,7 @@
             // retrieve trial
             if (cur_trials[i]['tr_type']=='retrieve') {
                 var retrieve_trial = {
-                    timeline: [show_trial_num,blank_screen,retrieve_prompt,click_advance],
+                    timeline: [blank_screen,retrieve_prompt,click_advance],
                     timeline_variables:[
                         {tr_num: cur_tr_num,
                         alien: [cur_alien,imageStart+"blank-button"+buttonStop],
@@ -979,12 +994,31 @@
             }
         }
 
-        // timeline.push(mae_teaching_end_1)
+        for (var min = 5; min > 0;  min--) {
+
+            var mae_teaching_end_2_color = {
+                timeline: [mae_timer],
+                timeline_variables:[
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's take a break to color.<br><br> We have "+min.toString()+" minutes left to color.</p>",
+                    choices: [imageStart+"next-button"+buttonStop]}
+                ],
+                conditional_function: function() {
+                    if(phase == 2 && keep_coloring) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
+
+            timeline.push(mae_teaching_end_2_color)
+
+        }
 
         var mae_teaching_end_2 = {
             timeline: [mae_screen],
             timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's take a break to color.<br><br> We will come back to Mae and her alien friends again soon! </p>",
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Let's come back to Mae and her alien friends again!</p>",
                 choices: [imageStart+"next-button"+buttonStop]}
             ],
             conditional_function: function() {
@@ -1057,7 +1091,7 @@
             var cur_dur = cur_trials[i]['tr_dur']
 
             var retrieve_trial = {
-                timeline: [show_trial_num,blank_screen,retrieve_prompt,click_advance],
+                timeline: [blank_screen,retrieve_prompt,click_advance],
                 timeline_variables:[
                     {tr_num: cur_tr_num,
                     alien: [cur_alien,imageStart+"blank-button"+buttonStop],
@@ -1167,7 +1201,7 @@
                 // show the trial number followed by a blank screen before the 1st step
                 // but not before the 2nd and 3rd step
                 if (j == 1) {
-                    var cur_timeline = [show_trial_num,blank_screen,form_prompt]
+                    var cur_timeline = [blank_screen,form_prompt]
                 } else {
                     var cur_timeline = [form_prompt]
                 }
@@ -1259,7 +1293,7 @@
             var cur_data = {week:cur_trials[i]['week'],order_counterbalance:cur_trials[i]['order_counterbalance'],alien_counterbalance:cur_trials[i]['alien_counterbalance'],set_counterbalance:cur_trials[i]['set_counterbalance'],block:cur_trials[i]['block'],tr_num_link:cur_trials[i]['link_tr_num'],condition:cur_trials[i]['condition'],teaching_block:cur_trials[i]['teaching_block'],name:cur_trials[i]['name'],alien:cur_trials[i]['alien'],target:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
 
             var link_trial = {
-                timeline: [show_trial_num,blank_screen,link_prompt],
+                timeline: [blank_screen,link_prompt],
                 timeline_variables:[
                     {tr_num: cur_tr_num,
                     name: cur_name,
@@ -1374,11 +1408,11 @@
                         var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
                         var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
                         var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
-                        console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
+                        // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
 
-                        if(ld_prac_n.count()==6 & ld_prac_accuracy >= 50) {do_practice = false}
+                        if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
 
-                        if(phase == 4 & do_practice) {
+                        if(phase == 4 && do_practice) {
                             return true;
                         } else {
                             return false;
@@ -1407,7 +1441,7 @@
                         var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
                         // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
 
-                        if(ld_prac_n.count()==6 & ld_prac_accuracy >= 50) {do_practice = false}
+                        if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
 
                         if(phase == 4 && do_practice && replay) {
                             return true;
@@ -1428,7 +1462,7 @@
                         var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
                         // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
 
-                        if(ld_prac_n.count()==6 & ld_prac_accuracy >= 50) {do_practice = false}
+                        if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
 
                         if(phase == 4 && do_practice) {
                             return true;
@@ -1463,10 +1497,35 @@
             // break between ld blocks
             if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
 
-                var ld_break = {
+                // keep_coloring = true
+
+                for (var min = 5; min > 0; min--) {
+
+                    // console.log("ld break with "+min.toString()+"minutes left")
+                    // console.log(keep_coloring)
+
+                    var ld_break = {
+                        timeline: [mae_timer],
+                        timeline_variables:[
+                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's take a break to color.<br><br> We have "+min.toString()+" minutes left to color.</p>",
+                            choices: [imageStart+"next-button"+buttonStop]}
+                        ],
+                        conditional_function: function() {
+                            if(phase == 4 && keep_coloring) {
+                                return true
+                            } else {
+                                return false
+                            }
+                        }
+                    }
+
+                    timeline.push(ld_break)
+                }
+
+                var ld_break_end = {
                     timeline: [mae_screen],
                     timeline_variables:[
-                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:30px;'>Great job! Let's take a break to color.<br><br> We will come back to Mae and her alien friends again soon! </p>",
+                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Let's come back to Mae and her alien friends again!</p>",
                         choices: [imageStart+"next-button"+buttonStop]}
                     ],
                     conditional_function: function() {
@@ -1475,9 +1534,11 @@
                         } else {
                             return false
                         }
-                    },
+                    }
                 }
-                timeline.push(ld_break)
+
+                timeline.push(ld_break_end)
+
             }
 
             // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
@@ -1487,7 +1548,7 @@
             var cur_data = {week:cur_trials[i]['week'],order_counterbalance:cur_trials[i]['order_counterbalance'],set_counterbalance:cur_trials[i]['set_counterbalance'],block:cur_trials[i]['block'],tr_num_ld:cur_trials[i]['ld_tr_num'],condition:cur_trials[i]['condition'],target:cur_trials[i]['name'],type:cur_trials[i]['type'],neighbor:cur_trials[i]['neighbor'],correct_response:cur_trials[i]['correct_response']}
 
             var ld_trial = {
-                timeline: [show_trial_num,blank_screen,ld_prompt],
+                timeline: [blank_screen,ld_prompt],
                 timeline_variables:[
                     {tr_num: cur_tr_num,
                     name: cur_name,

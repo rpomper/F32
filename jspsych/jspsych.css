@@ -497,10 +497,20 @@ body {
 }
 
 /* jsPsych progress bar */
-#jspsych-progressbar-container {
+/* #jspsych-progressbar-container {
   color: #555;
   border-bottom: 1px solid #dedede;
   background-color: #f9f9f9;
+  margin-bottom: 1em;
+  text-align: center;
+  padding: 8px 0px;
+  width: 100%;
+  line-height: 1em;
+} */
+#jspsych-progressbar-container {
+  color: #ffffff;
+  border-bottom: 1px solid #dedede;
+  background-color: #000000;
   margin-bottom: 1em;
   text-align: center;
   padding: 8px 0px;
@@ -514,7 +524,8 @@ body {
 }
 
 #jspsych-progressbar-outer {
-  background-color: #eee;
+  /* background-color: #eee; */
+  background-color: #000000;
   width: 50%;
   margin: auto;
   height: 14px;
