@@ -12,6 +12,7 @@
     <script src="jspsych/plugin-free-sort.js"></script>
     <script src="jspsych/plugin-video-keyboard-response.js"></script>
     <script src="jspsych/plugin-preload.js"></script>
+    <script src="jspsych/plugin-fullscreen.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.min.js"></script>
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
   </head>
@@ -224,8 +225,17 @@
                 global_phase.phase = phase
             }
         }
-        
+
         timeline.push(choose_phase)
+
+        var enter_fullscreen = {
+            type: jsPsychFullscreen,
+            message: "<p style='font-size:30px'>Click to enter fullscreen and begin the experiment</p>",
+            button_label: [imageStart+"start-button"+buttonStop],
+            // button_label: ["start"],
+        }
+        
+        timeline.push(enter_fullscreen)
 
         /* 
         ---------------------
