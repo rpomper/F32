@@ -657,7 +657,7 @@
         var study_prompt = {
             type: jsPsychAudioButtonResponseFlexiblelocations,
             trial_duration: jsPsych.timelineVariable('tr_dur'),
-            stimulus: jsPsych.timelineVariable('audio'),
+            stimulus: jsPsych.timelineVariable('name'),
             choices: jsPsych.timelineVariable('alien'),
             prompt: "",
             response_ends_trial: false,
@@ -722,7 +722,7 @@
             stimulus: jsPsych.timelineVariable('name'),
             choices: jsPsych.timelineVariable('aliens'),
             prompt: "",
-            block_attribute: ['inline-block','inline-block','block'],
+            block_attribute: ['inline-block','inline-block','block','inline-block'],
             response_ends_trial: jsPsych.timelineVariable('response'),
             trial_duration: jsPsych.timelineVariable('tr_dur'),
             grid_attribute: false,
@@ -741,7 +741,7 @@
             type: jsPsychAudioButtonResponseFlexiblelocations,
             stimulus: jsPsych.timelineVariable('name'),
             choices: [imageStart+"smiley-face"+squareButtonStop,imageStart+"frowny-face"+squareButtonStop,imageStart+"replay-button"+numButtonStop],
-            prompt: "",
+            prompt: jsPsych.timelineVariable('ortho'),
             block_attribute: ['inline-block','inline-block','block'],
             response_ends_trial: jsPsych.timelineVariable('response'),
             trial_duration: jsPsych.timelineVariable('tr_dur'),
@@ -770,7 +770,7 @@
             type: jsPsychAudioButtonResponseFlexiblelocations,
             stimulus: jsPsych.timelineVariable('name'),
             choices: [imageStart+"smiley-face-long"+emojiButtonStop,imageStart+"frowny-face-long"+emojiButtonStop],
-            prompt: "",
+            prompt: jsPsych.timelineVariable('ortho'),
             block_attribute: ['inline-block','inline-block'],
             response_ends_trial: jsPsych.timelineVariable('response'),
             trial_duration: jsPsych.timelineVariable('tr_dur'),
@@ -1138,9 +1138,7 @@
                 // step 3 lasts 10,000ms (10 sec) if the child does not respond
                 if (j == 3) {
                     var allow_response = true
-                    // var cur_data = {set:cur_trials[i]['set'],rep:cur_trials[i]['rep'],block:cur_trials[i]['block'],condition:cur_trials[i]['condition'],tr_num_form:cur_trials[i]['form_tr_num'],target:cur_trials[i]['name'],target_loc:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
-                    var cur_data = {week:cur_trials[i]['week'],order_counterbalance:cur_trials[i]['order_counterbalance'],alien_counterbalance:cur_trials[i]['alien_counterbalance'],set_counterbalance:cur_trials[i]['set_counterbalance'],block:cur_trials[i]['block'],tr_num_form:cur_trials[i]['form_tr_num'],condition:cur_trials[i]['condition'],teaching_block:cur_trials[i]['teaching_block'],name:cur_trials[i]['name'],target:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
-                    // var cur_dur = 10000
+                    var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],word:cur_trials[i]['word'],target:cur_trials[i]['target_loc'],correct_response:cur_trials[i]['correct_response']}
                     var cur_dur = null
                 } else {
                     var allow_response = false
@@ -1231,16 +1229,16 @@
             // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
             var cur_tr_num = cur_trials[i]['tr_num']
 
-            var cur_name = audioExt+"link/"+cur_trials[i]['name']+".wav"
+            var cur_name = audioExt+"link/"+cur_trials[i]['audio']+".wav"
 
             var cur_aliens = []
             cur_aliens.push(imageStart+cur_trials[i]['top_left']+imageStop)
             cur_aliens.push(imageStart+cur_trials[i]['top_right']+imageStop)
-            cur_aliens.push(imageStart+cur_trials[i]['bot_center']+imageStop)
+            cur_aliens.push(imageStart+cur_trials[i]['bottom_left']+imageStop)
+            cur_aliens.push(imageStart+cur_trials[i]['bottom_right']+imageStop)
 
-            // var cur_data = {set:cur_trials[i]['set'],rep:cur_trials[i]['rep'],block:cur_trials[i]['block'],condition:cur_trials[i]['condition'],tr_num_link:cur_trials[i]['link_tr_num'],target:cur_trials[i]['name'],target_loc:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
             // editing REDCap data
-            var cur_data = {week:cur_trials[i]['week'],order_counterbalance:cur_trials[i]['order_counterbalance'],alien_counterbalance:cur_trials[i]['alien_counterbalance'],set_counterbalance:cur_trials[i]['set_counterbalance'],block:cur_trials[i]['block'],tr_num_link:cur_trials[i]['link_tr_num'],condition:cur_trials[i]['condition'],teaching_block:cur_trials[i]['teaching_block'],name:cur_trials[i]['name'],alien:cur_trials[i]['alien'],target:cur_trials[i]['target'],correct_response:cur_trials[i]['correct_response']}
+            var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],word:cur_trials[i]['audio'],alien:cur_trials[i]['alien'],target:cur_trials[i]['target_loc'],correct_response:cur_trials[i]['correct_response']}
 
             var link_trial = {
                 timeline: [blank_screen,link_prompt],
@@ -1249,7 +1247,6 @@
                     name: cur_name,
                     aliens: cur_aliens,
                     response: true,
-                    // tr_dur: 10000,
                     tr_dur: null,
                     data: cur_data
                     }
@@ -1329,12 +1326,12 @@
         // Repeat once more if accuracy < 50%
 
         var prac_trials = [
-        {word:'cat.wav',name:'cat',type:'familiar',neighbor:'cat',correct_response:0},
-        {word:'wat.wav',name:'cat',type:'novel',neighbor:'wat',correct_response:1},
-        {word:'habby.wav',name:'happy',type:'novel',neighbor:'habby',correct_response:1},
-        {word:'happy.wav',name:'happy',type:'familiar',neighbor:'happy',correct_response:0},
-        {word:'run.wav',name:'run',type:'familiar',neighbor:'run',correct_response:0},
-        {word:'rin.wav',name:'run',type:'novel',neighbor:'rin',correct_response:1}]
+        {word:'cat.wav',name:'cat',klatt:'k@t',type:'familiar',neighbor:'cat',correct_response:0},
+        {word:'wat.wav',name:'cat',klatt:'w@t',type:'novel',neighbor:'wat',correct_response:1},
+        {word:'habby.wav',name:'happy',klatt:'h@bi',type:'novel',neighbor:'habby',correct_response:1},
+        {word:'happy.wav',name:'happy',klatt:'h@bi',type:'familiar',neighbor:'happy',correct_response:0},
+        {word:'run.wav',name:'run',klatt:'r^n',type:'familiar',neighbor:'run',correct_response:0},
+        {word:'rin.wav',name:'run',klatt:'rIn',type:'novel',neighbor:'rin',correct_response:1}]
 
         var do_practice = true;
 
@@ -1346,6 +1343,7 @@
                     // timeline: [blank_screen,ld_prompt,ld_feedback,show_ld_acc],
                     timeline_variables:[
                         {name: audioExt+"LD/"+prac_trials[i]['word'],
+                        ortho: prac_trials[i]['name']+" /"+prac_trials[i]['klatt']+"/",
                         response: true,
                         // tr_dur: 10000,
                         tr_dur: null,
@@ -1375,6 +1373,7 @@
                     timeline: [ld_prompt_repeat],
                     timeline_variables:[
                         {name: audioExt+"LD/"+prac_trials[i]['word'],
+                        ortho: prac_trials[i]['name']+" /"+prac_trials[i]['klatt']+"/",
                         response: true,
                         // tr_dur: 10000,
                         tr_dur: null,
@@ -1444,8 +1443,8 @@
 
         for (var i = 0; i < cur_trials.length; i++) {
             
-            // break between ld blocks
-            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+            // break between ld blocks 5 & 6 (i.e., half-way point)
+            if (cur_trials[i]['block'] == 6 && cur_trials[i]['block_tr_num'] == 1) {
 
                 // keep_coloring = true
 
@@ -1494,14 +1493,16 @@
             // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
             var cur_tr_num = cur_trials[i]['tr_num']
 
-            var cur_name = audioExt+"LD/"+cur_trials[i]['neighbor']+".wav"
-            var cur_data = {week:cur_trials[i]['week'],order_counterbalance:cur_trials[i]['order_counterbalance'],set_counterbalance:cur_trials[i]['set_counterbalance'],block:cur_trials[i]['block'],tr_num_ld:cur_trials[i]['ld_tr_num'],condition:cur_trials[i]['condition'],target:cur_trials[i]['name'],type:cur_trials[i]['type'],neighbor:cur_trials[i]['neighbor'],correct_response:cur_trials[i]['correct_response']}
+            var cur_name = audioExt+"LD/"+cur_trials[i]['audio']+".wav"
+            var cur_ortho = cur_trials[i]['audio']+" /"+cur_trial[i]['klatt']+"/"
+            var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['ld_tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],neighborhood:cur_trials[i]['neighborhood'],expected:cur_trials[i]['expected'],type:cur_trials[i]['type'],word:cur_trials[i]['audio'],klatt:cur_trials[i]['klatt'],correct_response:cur_trials[i]['correct_response']}
 
             var ld_trial = {
                 timeline: [blank_screen,ld_prompt],
                 timeline_variables:[
                     {tr_num: cur_tr_num,
                     name: cur_name,
+                    ortho: cur_ortho,
                     response: true,
                     // tr_dur: 10000,
                     tr_dur: null,
@@ -1523,6 +1524,7 @@
                 timeline_variables:[
                     {tr_num: cur_tr_num,
                     name: cur_name,
+                    ortho: cur_ortho,
                     response: true,
                     // tr_dur: 10000,
                     tr_dur: null,
