@@ -25,14 +25,13 @@
             jsPsych.data.displayData('json');
             var show_results_ld = jsPsych.data.get().filter({test_tr_type:'test_ld'})
             // console.log(show_results_ld)
-            uploadToRedcap("D988A480A47E17456634FDA91DB82408")
+            uploadToRedcap("2AE240F13B8103D36A665806DE617EDF")
     
         }
     });
 
     var subject_id = jsPsych.data.getURLVariable('sub')
     var trial_order = jsPsych.data.getURLVariable('order')
-    var filter_week = jsPsych.data.getURLVariable('week')
     let today = new Date()
     var DoT = {"month":today.getMonth()+1,"day":today.getDate(),"year":today.getFullYear(),"hour":today.getHours(),"min":today.getMinutes()}
 

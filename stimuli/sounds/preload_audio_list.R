@@ -25,15 +25,15 @@ for (i in 1:length(cur_sounds)) {
 }
 
 
-setwd("~/Documents/GitHub/F32/stimuli/sounds/LD")
-cur_sounds = list.files()
-for (i in 1:length(cur_sounds)) {
-  if (i < length(cur_sounds)) {
-    all_sounds = paste(all_sounds,"stimuli/sounds/LD/",cur_sounds[i],",",sep="")
-  } else {
-    all_sounds = paste(all_sounds,"stimuli/sounds/LD/",cur_sounds[i],sep="")
-  }
-}
+# setwd("~/Documents/GitHub/F32/stimuli/sounds/LD")
+# cur_sounds = list.files()
+# for (i in 1:length(cur_sounds)) {
+#   if (i < length(cur_sounds)) {
+#     all_sounds = paste(all_sounds,"stimuli/sounds/LD/",cur_sounds[i],",",sep="")
+#   } else {
+#     all_sounds = paste(all_sounds,"stimuli/sounds/LD/",cur_sounds[i],sep="")
+#   }
+# }
 
 setwd("~/Documents/GitHub/F32/stimuli/images/")
 cur_images = list.files()
@@ -63,6 +63,11 @@ setwd("~/Documents/GitHub/F32/orders/")
 save = data.frame('audio'=all_sounds,'images'=all_images,'video'=all_videos)
 write.csv(save,file='F32-preload.csv',row.names=F)
 
+
+
+# ? -----------------------------------------------------------------------
+
+ 
 
 setwd("~/Documents/GitHub/F32/stimuli/sounds/teaching")
 cur_sounds = list.files()
