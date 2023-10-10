@@ -68,7 +68,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var teaching_trials = results.data.filter(function(subset){return subset.week == filter_week})
+                var teaching_trials = results.data
                 console.log("Teaching:")
                 console.log(teaching_trials)
                 loadRecallTrials(preload_stims,teaching_trials);
@@ -82,7 +82,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var recall_trials = results.data.filter(function(subset){return subset.week == filter_week})
+                var recall_trials = results.data
                 console.log("Recall:")
                 console.log(recall_trials)
                 loadFormTrials(preload_stims,teaching_trials,recall_trials)
@@ -96,7 +96,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var form_trials = results.data.filter(function(subset){return subset.week == filter_week})
+                var form_trials = results.data
                 console.log("Form:")
                 console.log(form_trials)
                 loadLinkTrials(preload_stims,teaching_trials,recall_trials,form_trials)
@@ -110,7 +110,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var link_trials = results.data.filter(function(subset){return subset.week == filter_week})
+                var link_trials = results.data
                 console.log("Link:")
                 console.log(link_trials)
                 loadLDTrials(preload_stims,teaching_trials,recall_trials,form_trials,link_trials)
@@ -124,7 +124,7 @@
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-                var ld_trials = results.data.filter(function(subset){return subset.week == filter_week})
+                var ld_trials = results.data
                 console.log("LD:")
                 console.log(ld_trials)
                 startExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials)
@@ -235,64 +235,6 @@
         }
         
         timeline.push(enter_fullscreen)
-
-        /* 
-        ---------------------
-        INTER TRIAL INTERVALS
-        ---------------------
-
-        in the .csv files, the column tr_num is cumulative across all of the trials (teaching, recall, form, link, and LD)
-        we need to adjust these numbers depending on the phase
-        when phase = 1,
-            children will complete the teaching trials for the 1st time, so no adjustment is necessary
-        when phase = 2,
-            children will repeat the same teaching trials again, so add teaching_trials.length
-            children will complete the test trials after that 2nd repetition of teaching, so also add teaching_trials.length
-        when phase = 3, 
-            it is the beginning of the second day
-            children will first complete the test trials without any preceding teaching trials, so subtract teaching_trials.length
-        when phase = 4,
-            children will complete the lexical decision trials after the test trials, so also subtract teaching_trials.length
-        */
-
-        // function adjust_tr_num(tr_num_order) {
-
-        //     // var tr_num_order = jsPsych.timelineVariable('tr_num')
-
-        //     // if (phase==2) {
-        //     //     var tr_num_adj = teaching_trials.length
-        //     //     // var tr_num_adj = teaching_trials.filter(function(trial){return trial.set === 1}).length
-        //     // } else if (phase == 3 || phase == 4) {
-        //     //     var tr_num_adj = - teaching_trials.length
-        //     //     // var tr_num_adj = - teaching_trials.filter(function(trial){return trial.set === 1}).length
-        //     // } else {
-        //     //     var tr_num_adj = 0
-        //     // }
-
-        //     if (global_phase.phase==1) {
-        //         var tr_num_adj = 0
-        //     } else if (global_phase.phase==2){
-        //         var tr_num_adj = teaching_trials.length
-        //     } else {
-        //         var tr_num_adj = -teaching_trials.length
-        //     }
-
-        //     var tr_num_final = tr_num_order + tr_num_adj
-
-        //     return tr_num_final
-        // }
-
-        // var show_trial_num = {
-        //     type:jsPsychHtmlKeyboardResponse,
-        //     trial_duration:500,
-        //     response_ends_trial: false,
-        //     stimulus: function() {
-        //         return "<p style='font-size:90px; color:black;'>"+adjust_tr_num(jsPsych.timelineVariable('tr_num')).toString()+"</p>"
-        //         // return "<p style='font-size:90px;'>"+jsPsych.timelineVariable('tr_num').toString()+"</p>"
-        //     },
-        //     prompt:"",
-        //     choices: ['Enter']
-        // }
 
         var blank_screen = {
             type:jsPsychHtmlKeyboardResponse,
@@ -663,8 +605,17 @@
 
             timeline.push(lift_off)
 
+        }
 
-            var mae_after_game = {
+        play_game()
+
+        /* 
+        ------------
+        INSTRUCTIONS
+        ------------
+        */
+
+        var mae_phase1 = {
                 timeline: [mae_screen],
                 timeline_variables:[
                     {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to some of her alien friends.<br><br>She will teach you the names of 3 different kinds of aliens. <br>Your job is to learn what we call these kinds of aliens and what they look like.<br><br> Sometimes Mae will ask you what they are called. <br>You are meeting these aliens for the first time, so we do not expect you to remember them all. Just say what you remember. It is ok to guess! </p>",
@@ -679,19 +630,9 @@
                 }
             }
 
-            timeline.push(mae_after_game)
+        timeline.push(mae_phase1)
 
-        }
-
-        play_game()
-
-        /* 
-        ------------
-        INSTRUCTIONS
-        ------------
-        */
-
-        var mae_start = {
+        var mae_phase2 = {
             timeline: [mae_screen],
             timeline_variables:[
                 {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Mae will show you some of her alien friends from before.<br><br>This will give you more practice learning what we call them and what they look like. </p>",
@@ -705,7 +646,7 @@
                     }
             }
         }
-        timeline.push(mae_start)
+        timeline.push(mae_phase2)
 
         /* 
         ---------------------
@@ -716,7 +657,7 @@
         var study_prompt = {
             type: jsPsychAudioButtonResponseFlexiblelocations,
             trial_duration: jsPsych.timelineVariable('tr_dur'),
-            stimulus: jsPsych.timelineVariable('name'),
+            stimulus: jsPsych.timelineVariable('audio'),
             choices: jsPsych.timelineVariable('alien'),
             prompt: "",
             response_ends_trial: false,
