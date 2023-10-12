@@ -618,7 +618,7 @@
         var mae_phase1 = {
                 timeline: [mae_screen],
                 timeline_variables:[
-                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to some of her alien friends.<br><br>She will teach you the names of 3 different kinds of aliens. <br>Your job is to learn what we call these kinds of aliens and what they look like.<br><br> Sometimes Mae will ask you what they are called. <br>You are meeting these aliens for the first time, so we do not expect you to remember them all. Just say what you remember. It is ok to guess! </p>",
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to some of her alien friends.<br><br>She will teach you the names of 4 different kinds of aliens. <br>Your job is to learn what we call these kinds of aliens and what they look like.<br><br> Sometimes Mae will ask you what they are called. <br>You are meeting these aliens for the first time, so we do not expect you to remember them all. Just say what you remember. It is ok to guess! </p>",
                     choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
@@ -1494,7 +1494,7 @@
             var cur_tr_num = cur_trials[i]['tr_num']
 
             var cur_name = audioExt+"LD/"+cur_trials[i]['audio']+".wav"
-            var cur_ortho = cur_trials[i]['audio']+" /"+cur_trial[i]['klatt']+"/"
+            var cur_ortho = cur_trials[i]['audio']+" /"+cur_trials[i]['klatt']+"/"
             var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['ld_tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],neighborhood:cur_trials[i]['neighborhood'],expected:cur_trials[i]['expected'],type:cur_trials[i]['type'],word:cur_trials[i]['audio'],klatt:cur_trials[i]['klatt'],correct_response:cur_trials[i]['correct_response']}
 
             var ld_trial = {
