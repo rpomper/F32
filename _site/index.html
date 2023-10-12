@@ -846,88 +846,177 @@
         ------------------------
         */
 
-        // var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
-        var cur_trials = teaching_trials
+        function create_teaching_trials(filter_phase){
 
-        for (var i = 0; i < cur_trials.length; i++) {
+            var cur_trials = teaching_trials.filter(function(trial){return trial.phase === filter_phase})
 
-            // break between teaching blocks
-            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
-                // play_game()
+            for (var i = 0; i < cur_trials.length; i++) {
 
-                var mae_teaching_break = {
-                    timeline: [mae_screen],
-                    timeline_variables:[
-                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends.<br>She will teach you the names of 3 new kinds of aliens.<br>Remember your job is to learn what they are called and what they look like. </p>",
-                        choices: [imageStart+"next-button"+buttonStop]}
-                    ],
-                    conditional_function: function() {
-                        if(phase == 1 | phase == 2) {
-                            return true
-                        } else {
-                            return false
+                // break between teaching blocks
+                if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+                    // play_game()
+
+                    var mae_teaching_break = {
+                        timeline: [mae_screen],
+                        timeline_variables:[
+                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends.<br>She will teach you the names of 4 new kinds of aliens.<br>Remember your job is to learn what they are called and what they look like. </p>",
+                            choices: [imageStart+"next-button"+buttonStop]}
+                        ],
+                        conditional_function: function() {
+                            if(phase == filter_phase) {
+                                return true
+                            } else {
+                                return false
+                            }
                         }
                     }
+
+                    timeline.push(mae_teaching_break)
+
                 }
 
-                timeline.push(mae_teaching_break)
+                // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
+                var cur_tr_num = cur_trials[i]['tr_num']
+                var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
+                var cur_name = audioExt+"teaching/"+cur_trials[i]['audio']+".wav"
+                var cur_dur = cur_trials[i]['tr_dur']
 
-            }
-
-            // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
-            var cur_tr_num = cur_trials[i]['tr_num']
-            var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
-            var cur_name = audioExt+"teaching/"+cur_trials[i]['audio']+".wav"
-            var cur_dur = cur_trials[i]['tr_dur']
-
-            // study trial
-            if (cur_trials[i]['tr_type']=='study'){
-                var study_trial = {
-                    timeline: [blank_screen,study_prompt],
-                    timeline_variables:[
-                        {tr_num: cur_tr_num,
-                        alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-                        alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-                        name: cur_name,
-                        button: imageStart+"blank-button"+buttonStop,
-                        tr_dur: cur_dur
-                        }
-                    ],
-                    conditional_function: function() {
-                        if(phase == 1 | phase ==2) {
-                            return true;
-                        } else {
-                            return false;
+                // study trial
+                if (cur_trials[i]['tr_type']=='study'){
+                    var study_trial = {
+                        timeline: [blank_screen,study_prompt],
+                        timeline_variables:[
+                            {tr_num: cur_tr_num,
+                            alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                            alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+                            name: cur_name,
+                            button: imageStart+"blank-button"+buttonStop,
+                            tr_dur: cur_dur
+                            }
+                        ],
+                        conditional_function: function() {
+                            if(phase == filter_phase) {
+                                return true;
+                            } else {
+                                return false;
+                            }
                         }
                     }
+                    timeline.push(study_trial)
                 }
-                timeline.push(study_trial)
-            }
 
-            // retrieve trial
-            if (cur_trials[i]['tr_type']=='retrieve') {
-                var retrieve_trial = {
-                    timeline: [blank_screen,retrieve_prompt,click_advance],
-                    timeline_variables:[
-                        {tr_num: cur_tr_num,
-                        alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-                        alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-                        name: audioExt+"teaching/prompt.wav",
-                        button: imageStart+"blank-button"+buttonStop,
-                        tr_dur: cur_dur
-                        }
-                    ],
-                    conditional_function: function() {
-                        if(phase == 1 | phase ==2) {
-                            return true;
-                        } else {
-                            return false;
+                // retrieve trial
+                if (cur_trials[i]['tr_type']=='retrieve') {
+                    var retrieve_trial = {
+                        timeline: [blank_screen,retrieve_prompt,click_advance],
+                        timeline_variables:[
+                            {tr_num: cur_tr_num,
+                            alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                            alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+                            name: audioExt+"teaching/prompt.wav",
+                            button: imageStart+"blank-button"+buttonStop,
+                            tr_dur: cur_dur
+                            }
+                        ],
+                        conditional_function: function() {
+                            if(phase == filter_phase) {
+                                return true;
+                            } else {
+                                return false;
+                            }
                         }
                     }
+                    timeline.push(retrieve_trial)
                 }
-                timeline.push(retrieve_trial)
-            }
+            } 
+
         }
+
+        create_teaching_trials(1)
+        create_teaching_trials(2)
+
+        // var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
+        // var cur_trials = teaching_trials
+
+        // for (var i = 0; i < cur_trials.length; i++) {
+
+        //     // break between teaching blocks
+        //     if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+        //         // play_game()
+
+        //         var mae_teaching_break = {
+        //             timeline: [mae_screen],
+        //             timeline_variables:[
+        //                 {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends.<br>She will teach you the names of 3 new kinds of aliens.<br>Remember your job is to learn what they are called and what they look like. </p>",
+        //                 choices: [imageStart+"next-button"+buttonStop]}
+        //             ],
+        //             conditional_function: function() {
+        //                 if(phase == 1 | phase == 2) {
+        //                     return true
+        //                 } else {
+        //                     return false
+        //                 }
+        //             }
+        //         }
+
+        //         timeline.push(mae_teaching_break)
+
+        //     }
+
+        //     // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
+        //     var cur_tr_num = cur_trials[i]['tr_num']
+        //     var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
+        //     var cur_name = audioExt+"teaching/"+cur_trials[i]['audio']+".wav"
+        //     var cur_dur = cur_trials[i]['tr_dur']
+
+        //     // study trial
+        //     if (cur_trials[i]['tr_type']=='study'){
+        //         var study_trial = {
+        //             timeline: [blank_screen,study_prompt],
+        //             timeline_variables:[
+        //                 {tr_num: cur_tr_num,
+        //                 alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+        //                 alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+        //                 name: cur_name,
+        //                 button: imageStart+"blank-button"+buttonStop,
+        //                 tr_dur: cur_dur
+        //                 }
+        //             ],
+        //             conditional_function: function() {
+        //                 if(phase == 1 | phase ==2) {
+        //                     return true;
+        //                 } else {
+        //                     return false;
+        //                 }
+        //             }
+        //         }
+        //         timeline.push(study_trial)
+        //     }
+
+        //     // retrieve trial
+        //     if (cur_trials[i]['tr_type']=='retrieve') {
+        //         var retrieve_trial = {
+        //             timeline: [blank_screen,retrieve_prompt,click_advance],
+        //             timeline_variables:[
+        //                 {tr_num: cur_tr_num,
+        //                 alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+        //                 alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+        //                 name: audioExt+"teaching/prompt.wav",
+        //                 button: imageStart+"blank-button"+buttonStop,
+        //                 tr_dur: cur_dur
+        //                 }
+        //             ],
+        //             conditional_function: function() {
+        //                 if(phase == 1 | phase ==2) {
+        //                     return true;
+        //                 } else {
+        //                     return false;
+        //                 }
+        //             }
+        //         }
+        //         timeline.push(retrieve_trial)
+        //     }
+        // }
 
         var mae_teaching_end_1 = {
             timeline: [mae_screen],
