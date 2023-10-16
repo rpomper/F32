@@ -188,8 +188,6 @@
         var preload_stimuli = {
             type: jsPsychPreload,
             auto_preload: true,
-            // images: ['/stimuli/images/A1.jpg','/stimuli/images/A3.jpg','/stimuli/images/A33.jpg','/stimuli/images/B2.jpg','/stimuli/images/B23.jpg','/stimuli/images/C31.jpg','/stimuli/images/E1.jpg','/stimuli/images/E3.jpg','/stimuli/images/G3.jpg','/stimuli/images/I1.jpg','/stimuli/images/J2.jpg','/stimuli/images/J3.jpg'],
-            // audio: ['stimuli/sounds/teaching/chev.wav','stimuli/sounds/teaching/darg.wav','stimuli/sounds/teaching/foob.wav','stimuli/sounds/teaching/gazzer.wav','stimuli/sounds/teaching/heab.wav','stimuli/sounds/teaching/juss.wav','stimuli/sounds/teaching/koba.wav','stimuli/sounds/teaching/kulp.wav','stimuli/sounds/teaching/modi.wav','stimuli/sounds/teaching/pyzer.wav','stimuli/sounds/teaching/sarl.wav','stimuli/sounds/teaching/wilp.wav'],
             images: preload_stims[0]['images'].split(',').slice(0,-1), 
             audio: preload_stims[0]['audio'].split(',').slice(0,-1),
             video: preload_stims[0]['video'].split(',').slice(0,-1),
@@ -231,7 +229,6 @@
             type: jsPsychFullscreen,
             message: "<p style='font-size:30px'>Click to enter fullscreen and begin the experiment</p>",
             button_label: [imageStart+"start-button"+buttonStop],
-            // button_label: ["start"],
         }
         
         timeline.push(enter_fullscreen)
@@ -269,7 +266,6 @@
             prompt: "",
             margin_vertical:['20px'],
             on_finish: function(data){
-                // console.log(data.response)
                 if (data.response == 0) {keep_coloring = false}
             }
         }
@@ -618,7 +614,12 @@
         var mae_phase1 = {
                 timeline: [mae_screen],
                 timeline_variables:[
-                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to some of her alien friends.<br><br>She will teach you the names of 4 different kinds of aliens. <br>Your job is to learn what we call these kinds of aliens and what they look like.<br><br> Sometimes Mae will ask you what they are called. <br>You are meeting these aliens for the first time, so we do not expect you to remember them all. Just say what you remember. It is ok to guess! </p>",
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br>"+
+                        "Mae will now introduce you to some of her alien friends.<br><br>"+
+                        "She will teach you the names of 4 different kinds of aliens. <br>"+
+                        "Your job is to learn what we call these kinds of aliens and what they look like.<br><br>"+
+                        "Sometimes Mae will ask you what they are called. <br>"+
+                        "You are meeting these aliens for the first time, so we do not expect you to remember them all. Just say what you remember. It is ok to guess! </p>",
                     choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
@@ -635,7 +636,8 @@
         var mae_phase2 = {
             timeline: [mae_screen],
             timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Mae will show you some of her alien friends from before.<br><br>This will give you more practice learning what we call them and what they look like. </p>",
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Mae will show you some of her alien friends from before.<br><br>"+
+                    "This will give you more practice learning what we call them and what they look like. </p>",
                 choices: [imageStart+"start-button"+buttonStop]}
             ],
             conditional_function: function() {
@@ -648,45 +650,218 @@
         }
         timeline.push(mae_phase2)
 
-        /* 
-        ---------------------
-        STUDY TRIALS
-        ---------------------
+        /*
+        ------------------------
+        ASSEMBLE TEACHING TRIALS
+        ------------------------
         */
 
-        var study_prompt = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            trial_duration: jsPsych.timelineVariable('tr_dur'),
-            stimulus: jsPsych.timelineVariable('name'),
-            choices: jsPsych.timelineVariable('alien'),
-            prompt: "",
-            response_ends_trial: false,
-            block_attribute: ['inline-block','block'],
-            grid_attribute: false,
-            margin_vertical: ['20px']
+        function create_teaching_trials(filter_phase){
+
+            var cur_trials = teaching_trials.filter(function(trial){return trial.phase === filter_phase})
+
+            var teaching_trial = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                trial_duration: jsPsych.timelineVariable('tr_dur'),
+                stimulus: jsPsych.timelineVariable('name'),
+                choices: jsPsych.timelineVariable('alien'),
+                prompt: "",
+                response_ends_trial: false,
+                block_attribute: ['inline-block','block'],
+                grid_attribute: false,
+                margin_vertical: ['20px']
+            }
+
+            var click_advance = {
+                type: jsPsychHtmlButtonResponseFlexiblelocations,
+                stimulus: "",
+                choices: jsPsych.timelineVariable('alien_click'),
+                prompt: "",
+                block_attribute: ['inline-block','block'],
+                grid_attribute: false,
+                margin_vertical: ['20px']
+            }
+
+            for (var i = 0; i < cur_trials.length; i++) {
+
+                var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
+                var cur_name = audioExt+"teaching/"+cur_trials[i]['audio']+".wav"
+                var cur_dur = cur_trials[i]['tr_dur']
+
+                // break between teaching blocks
+                if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+
+                    var mae_teaching_break = {
+                        timeline: [mae_screen],
+                        timeline_variables:[
+                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br>"+
+                                "Mae will now introduce you to more alien friends.<br>"+
+                                "She will teach you the names of 4 new kinds of aliens.<br>"+
+                                "Remember your job is to learn what they are called and what they look like. </p>",
+                            choices: [imageStart+"next-button"+buttonStop]}
+                        ],
+                        conditional_function: function() {
+                            if(phase == filter_phase) {
+                                return true
+                            } else {
+                                return false
+                            }
+                        }
+                    }
+
+                    timeline.push(mae_teaching_break)
+
+                }
+
+                var cur_trial = {
+                    timeline: [blank_screen,teaching_trial],
+                    timeline_variables:[
+                        {
+                        alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                        name: cur_name,
+                        button: imageStart+"blank-button"+buttonStop,
+                        tr_dur: cur_dur
+                        }
+                    ],
+                    conditional_function: function() {
+                        if(phase == filter_phase) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+
+                timeline.push(cur_trial)
+
+                if (cur_trials[i]['tr_type']=='retrieve') {
+                    var retrieve_trial = {
+                        timeline: [click_advance],
+                        timeline_variables:[{alien_click: [cur_alien,imageStart+"next-button"+buttonStop]}],
+                        conditional_function: function() {
+                            if(phase == filter_phase) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+                    timeline.push(retrieve_trial)
+                }
+
+                // // study trial
+                // if (cur_trials[i]['tr_type']=='study'){
+                //     var study_trial = {
+                //         timeline: [blank_screen,teaching_trial],
+                //         timeline_variables:[
+                //             {tr_num: cur_tr_num,
+                //             alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                //             // alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+                //             name: cur_name,
+                //             button: imageStart+"blank-button"+buttonStop,
+                //             tr_dur: cur_dur
+                //             }
+                //         ],
+                //         conditional_function: function() {
+                //             if(phase == filter_phase) {
+                //                 return true;
+                //             } else {
+                //                 return false;
+                //             }
+                //         }
+                //     }
+                //     timeline.push(study_trial)
+                // }
+
+                // // retrieve trial
+                // if (cur_trials[i]['tr_type']=='retrieve') {
+                //     var retrieve_trial = {
+                //         timeline: [blank_screen,teaching_trial,click_advance],
+                //         timeline_variables:[
+                //             {tr_num: cur_tr_num,
+                //             alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                //             alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+                //             // name: audioExt+"teaching/prompt.wav",
+                //             name: cur_name,
+                //             button: imageStart+"blank-button"+buttonStop,
+                //             tr_dur: cur_dur
+                //             }
+                //         ],
+                //         conditional_function: function() {
+                //             if(phase == filter_phase) {
+                //                 return true;
+                //             } else {
+                //                 return false;
+                //             }
+                //         }
+                //     }
+                //     timeline.push(retrieve_trial)
+                // }
+
+
+            } 
+
         }
 
-        var retrieve_prompt = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            trial_duration: jsPsych.timelineVariable('tr_dur'),
-            stimulus: audioExt+"teaching/prompt.wav",
-            choices: jsPsych.timelineVariable('alien'),
-            prompt: "",
-            response_ends_trial: false,
-            block_attribute: ['inline-block','block'],
-            grid_attribute: false,
-            margin_vertical: ['20px']
+        create_teaching_trials(1)
+        create_teaching_trials(2)
+
+        var mae_teaching_end_1 = {
+            timeline: [mae_screen],
+            timeline_variables:[
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's play a different game.<br><br>"+
+                    "We will come back to Mae and her alien friends again soon! </p>",
+                choices: [imageStart+"next-button"+buttonStop]}
+            ],
+            conditional_function: function() {
+                if(phase == 1) {
+                    return true
+                } else {
+                    return false
+                }
+            }
         }
 
-        var click_advance = {
-            type: jsPsychHtmlButtonResponseFlexiblelocations,
-            stimulus: "",
-            choices: jsPsych.timelineVariable('alien_click'),
-            prompt: "",
-            block_attribute: ['inline-block','block'],
-            grid_attribute: false,
-            margin_vertical: ['20px']
+        timeline.push(mae_teaching_end_1)
+
+        for (var min = 5; min > 0;  min--) {
+
+            var mae_teaching_end_2_color = {
+                timeline: [mae_timer],
+                timeline_variables:[
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's take a break to color.<br><br>"+
+                        "We have "+min.toString()+" minutes left to color.</p>",
+                    choices: [imageStart+"next-button"+buttonStop]}
+                ],
+                conditional_function: function() {
+                    if(phase == 2 && keep_coloring) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
+
+            timeline.push(mae_teaching_end_2_color)
+
         }
+
+        var mae_teaching_end_2 = {
+            timeline: [mae_screen],
+            timeline_variables:[
+                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Let's come back to Mae and her alien friends again!</p>",
+                choices: [imageStart+"next-button"+buttonStop]}
+            ],
+            conditional_function: function() {
+                if(phase == 2) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        timeline.push(mae_teaching_end_2)
 
         /* 
         ---------------------
@@ -722,10 +897,10 @@
             stimulus: jsPsych.timelineVariable('name'),
             choices: jsPsych.timelineVariable('aliens'),
             prompt: "",
-            block_attribute: ['inline-block','inline-block','block','inline-block'],
+            // block_attribute: ['inline-block','inline-block','block','inline-block'],
             response_ends_trial: jsPsych.timelineVariable('response'),
             trial_duration: jsPsych.timelineVariable('tr_dur'),
-            grid_attribute: false,
+            grid_attribute: true,
             margin_vertical: ['10px'],
             data: jsPsych.timelineVariable('data'),
             on_finish: function(data){
@@ -840,236 +1015,7 @@
             }
         }
 
-        /*
-        ------------------------
-        ASSEMBLE TEACHING TRIALS
-        ------------------------
-        */
 
-        function create_teaching_trials(filter_phase){
-
-            var cur_trials = teaching_trials.filter(function(trial){return trial.phase === filter_phase})
-
-            for (var i = 0; i < cur_trials.length; i++) {
-
-                // break between teaching blocks
-                if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
-                    // play_game()
-
-                    var mae_teaching_break = {
-                        timeline: [mae_screen],
-                        timeline_variables:[
-                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends.<br>She will teach you the names of 4 new kinds of aliens.<br>Remember your job is to learn what they are called and what they look like. </p>",
-                            choices: [imageStart+"next-button"+buttonStop]}
-                        ],
-                        conditional_function: function() {
-                            if(phase == filter_phase) {
-                                return true
-                            } else {
-                                return false
-                            }
-                        }
-                    }
-
-                    timeline.push(mae_teaching_break)
-
-                }
-
-                // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
-                var cur_tr_num = cur_trials[i]['tr_num']
-                var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
-                var cur_name = audioExt+"teaching/"+cur_trials[i]['audio']+".wav"
-                var cur_dur = cur_trials[i]['tr_dur']
-
-                // study trial
-                if (cur_trials[i]['tr_type']=='study'){
-                    var study_trial = {
-                        timeline: [blank_screen,study_prompt],
-                        timeline_variables:[
-                            {tr_num: cur_tr_num,
-                            alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-                            alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-                            name: cur_name,
-                            button: imageStart+"blank-button"+buttonStop,
-                            tr_dur: cur_dur
-                            }
-                        ],
-                        conditional_function: function() {
-                            if(phase == filter_phase) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                    timeline.push(study_trial)
-                }
-
-                // retrieve trial
-                if (cur_trials[i]['tr_type']=='retrieve') {
-                    var retrieve_trial = {
-                        timeline: [blank_screen,retrieve_prompt,click_advance],
-                        timeline_variables:[
-                            {tr_num: cur_tr_num,
-                            alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-                            alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-                            name: audioExt+"teaching/prompt.wav",
-                            button: imageStart+"blank-button"+buttonStop,
-                            tr_dur: cur_dur
-                            }
-                        ],
-                        conditional_function: function() {
-                            if(phase == filter_phase) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                    timeline.push(retrieve_trial)
-                }
-            } 
-
-        }
-
-        create_teaching_trials(1)
-        create_teaching_trials(2)
-
-        // var cur_trials = teaching_trials.filter(function(trial){return trial.set === 1})
-        // var cur_trials = teaching_trials
-
-        // for (var i = 0; i < cur_trials.length; i++) {
-
-        //     // break between teaching blocks
-        //     if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
-        //         // play_game()
-
-        //         var mae_teaching_break = {
-        //             timeline: [mae_screen],
-        //             timeline_variables:[
-        //                 {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will now introduce you to more alien friends.<br>She will teach you the names of 3 new kinds of aliens.<br>Remember your job is to learn what they are called and what they look like. </p>",
-        //                 choices: [imageStart+"next-button"+buttonStop]}
-        //             ],
-        //             conditional_function: function() {
-        //                 if(phase == 1 | phase == 2) {
-        //                     return true
-        //                 } else {
-        //                     return false
-        //                 }
-        //             }
-        //         }
-
-        //         timeline.push(mae_teaching_break)
-
-        //     }
-
-        //     // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
-        //     var cur_tr_num = cur_trials[i]['tr_num']
-        //     var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
-        //     var cur_name = audioExt+"teaching/"+cur_trials[i]['audio']+".wav"
-        //     var cur_dur = cur_trials[i]['tr_dur']
-
-        //     // study trial
-        //     if (cur_trials[i]['tr_type']=='study'){
-        //         var study_trial = {
-        //             timeline: [blank_screen,study_prompt],
-        //             timeline_variables:[
-        //                 {tr_num: cur_tr_num,
-        //                 alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-        //                 alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-        //                 name: cur_name,
-        //                 button: imageStart+"blank-button"+buttonStop,
-        //                 tr_dur: cur_dur
-        //                 }
-        //             ],
-        //             conditional_function: function() {
-        //                 if(phase == 1 | phase ==2) {
-        //                     return true;
-        //                 } else {
-        //                     return false;
-        //                 }
-        //             }
-        //         }
-        //         timeline.push(study_trial)
-        //     }
-
-        //     // retrieve trial
-        //     if (cur_trials[i]['tr_type']=='retrieve') {
-        //         var retrieve_trial = {
-        //             timeline: [blank_screen,retrieve_prompt,click_advance],
-        //             timeline_variables:[
-        //                 {tr_num: cur_tr_num,
-        //                 alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-        //                 alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-        //                 name: audioExt+"teaching/prompt.wav",
-        //                 button: imageStart+"blank-button"+buttonStop,
-        //                 tr_dur: cur_dur
-        //                 }
-        //             ],
-        //             conditional_function: function() {
-        //                 if(phase == 1 | phase ==2) {
-        //                     return true;
-        //                 } else {
-        //                     return false;
-        //                 }
-        //             }
-        //         }
-        //         timeline.push(retrieve_trial)
-        //     }
-        // }
-
-        var mae_teaching_end_1 = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's play a different game.<br><br> We will come back to Mae and her alien friends again soon! </p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 1) {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        }
-
-        for (var min = 5; min > 0;  min--) {
-
-            var mae_teaching_end_2_color = {
-                timeline: [mae_timer],
-                timeline_variables:[
-                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's take a break to color.<br><br> We have "+min.toString()+" minutes left to color.</p>",
-                    choices: [imageStart+"next-button"+buttonStop]}
-                ],
-                conditional_function: function() {
-                    if(phase == 2 && keep_coloring) {
-                        return true
-                    } else {
-                        return false
-                    }
-                }
-            }
-
-            timeline.push(mae_teaching_end_2_color)
-
-        }
-
-        var mae_teaching_end_2 = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Let's come back to Mae and her alien friends again!</p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 2) {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        }
-
-        timeline.push(mae_teaching_end_2)
 
 
         /*
