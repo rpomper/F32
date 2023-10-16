@@ -231,7 +231,7 @@
             button_label: [imageStart+"start-button"+buttonStop],
         }
         
-        timeline.push(enter_fullscreen)
+        // timeline.push(enter_fullscreen)
 
         var blank_screen = {
             type:jsPsychHtmlKeyboardResponse,
@@ -240,14 +240,6 @@
             stimulus: "",
             prompt:"",
             choices: ['Enter']
-        }
-
-        var break_screen = {
-            type: jsPsychHtmlButtonResponseFlexiblelocations,
-            stimulus: jsPsych.timelineVariable('break_message'),
-            choices: [imageStart+"next-button"+buttonStop],
-            prompt: "",
-            margin_vertical: ['20px']
         }
 
         var mae_screen = {
@@ -270,10 +262,10 @@
             }
         }
 
-        /* 
-        ------------
-        GAME
-        ------------
+        /*
+        --------------
+        ASSEMBLE GAME 
+        --------------
         */
 
         function play_game(){
@@ -302,10 +294,10 @@
             var assemble_ship = {
                 type: jsPsychFreeSort,
                 stimuli: spaceship_parts,
-                stim_height: 150,
-                stim_width: 150,
-                sort_area_height: 600,
-                sort_area_width: 800,
+                stim_height: 125,
+                stim_width: 125,
+                sort_area_height: 525,
+                sort_area_width: 700,
                 stim_starts_inside: false,
                 column_spread_factor: 0.5,
                 scale_factor:1,
@@ -319,10 +311,10 @@
             var pack_ship = {
                 type: jsPsychFreeSort,
                 stimuli: luggage,
-                stim_height: 150,
-                stim_width: 150,
-                sort_area_height: 600,
-                sort_area_width: 800,
+                stim_height: 125,
+                stim_width: 125,
+                sort_area_height: 525,
+                sort_area_width: 700,
                 stim_starts_inside: false,
                 column_spread_factor: 0.5,
                 scale_factor:1,
@@ -605,11 +597,13 @@
 
         play_game()
 
-        /* 
-        ------------
-        INSTRUCTIONS
-        ------------
+        /*
+        ------------------------
+        ASSEMBLE TEACHING TRIALS
+        ------------------------
         */
+
+        // START INSTRUCTIONS
 
         var mae_phase1 = {
                 timeline: [mae_screen],
@@ -650,11 +644,8 @@
         }
         timeline.push(mae_phase2)
 
-        /*
-        ------------------------
-        ASSEMBLE TEACHING TRIALS
-        ------------------------
-        */
+
+        // TEACHING TRIALS
 
         function create_teaching_trials(filter_phase){
 
@@ -806,6 +797,8 @@
         create_teaching_trials(1)
         create_teaching_trials(2)
 
+        // END INSTRUCTIONS
+
         var mae_teaching_end_1 = {
             timeline: [mae_screen],
             timeline_variables:[
@@ -863,160 +856,6 @@
 
         timeline.push(mae_teaching_end_2)
 
-        /* 
-        ---------------------
-        TEST TRIALS
-        ---------------------
-        */
-
-        var form_prompt = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            stimulus: jsPsych.timelineVariable('name'),
-            choices: jsPsych.timelineVariable('dots'),
-            prompt: "",
-            block_attribute: ['inline-block','inline-block','inline-block'],
-            response_ends_trial: jsPsych.timelineVariable('response'),
-            trial_duration: jsPsych.timelineVariable('tr_dur'),
-            grid_attribute: false,
-            margin_vertical: ['10px'],
-            margin_horizontal: ['100px'],
-            data: jsPsych.timelineVariable('data'),
-            on_finish: function(data){
-                if (jsPsych.timelineVariable('log_data')) {
-                    data.phase = phase
-                    data.test_tr_type = 'test_form'
-                    // data.tr_num_disp = cur_tr_num
-                    data.correct = data.response == data.correct_response
-                    // console.log(data)
-                }
-            }
-        }
-        
-        var link_prompt = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            stimulus: jsPsych.timelineVariable('name'),
-            choices: jsPsych.timelineVariable('aliens'),
-            prompt: "",
-            // block_attribute: ['inline-block','inline-block','block','inline-block'],
-            response_ends_trial: jsPsych.timelineVariable('response'),
-            trial_duration: jsPsych.timelineVariable('tr_dur'),
-            grid_attribute: true,
-            margin_vertical: ['10px'],
-            data: jsPsych.timelineVariable('data'),
-            on_finish: function(data){
-                data.phase = phase
-                data.test_tr_type = 'test_link'
-                // data.tr_num_disp = cur_tr_num
-                data.correct = data.response == data.correct_response
-                // console.log(data)
-            }
-        }
-
-        var ld_prompt = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            stimulus: jsPsych.timelineVariable('name'),
-            choices: [imageStart+"smiley-face"+squareButtonStop,imageStart+"frowny-face"+squareButtonStop,imageStart+"replay-button"+numButtonStop],
-            prompt: jsPsych.timelineVariable('ortho'),
-            block_attribute: ['inline-block','inline-block','block'],
-            response_ends_trial: jsPsych.timelineVariable('response'),
-            trial_duration: jsPsych.timelineVariable('tr_dur'),
-            grid_attribute: false,
-            margin_vertical: ['30px'],
-            margin_horizontal: ['100px'],
-            data: jsPsych.timelineVariable('data'),
-            on_finish: function(data){
-                data.phase = phase
-                data.test_tr_type = 'test_ld'
-                // data.tr_num_disp = cur_tr_num
-                if (data.response == 2) {
-                    data.repeated = 'yes'
-                    data.correct = null
-                    data.accuracy = null
-                } else {
-                    data.repeated = 'no'
-                    data.correct = data.response == data.correct_response
-                    if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
-                }
-                // console.log(data)
-            }
-        }
-
-        var ld_prompt_repeat = {
-            type: jsPsychAudioButtonResponseFlexiblelocations,
-            stimulus: jsPsych.timelineVariable('name'),
-            choices: [imageStart+"smiley-face-long"+emojiButtonStop,imageStart+"frowny-face-long"+emojiButtonStop],
-            prompt: jsPsych.timelineVariable('ortho'),
-            block_attribute: ['inline-block','inline-block'],
-            response_ends_trial: jsPsych.timelineVariable('response'),
-            trial_duration: jsPsych.timelineVariable('tr_dur'),
-            grid_attribute: true,
-            margin_vertical: ['30px'],
-            margin_horizontal: ['100px'],
-            data: jsPsych.timelineVariable('data'),
-            on_finish: function(data){
-                data.phase = phase
-                data.test_tr_type = 'test_ld'
-                // data.tr_num_disp = cur_tr_num
-                data.repeated = 'no'
-                data.correct = data.response == data.correct_response
-                if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
-                // console.log(data)
-            }
-        }
-
-        var ld_feedback = {
-            type: jsPsychHtmlButtonResponseFlexiblelocations,
-            stimulus: function(){
-                var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
-                // console.log(last_trial_correct)
-                if(last_trial_correct){
-                    return imageStart+'correct'+squareButtonStop
-                } else {
-                    return imageStart+'incorrect'+squareButtonStop
-                }
-            },
-            choices: [imageStart+"next-button"+buttonStop],
-            prompt: "",
-            margin_vertical: ['20px']
-        }
-
-        var ld_acc = {
-            type: jsPsychHtmlButtonResponseFlexiblelocations,
-            stimulus: function(){
-                var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep})
-                var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
-                var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
-                // console.log("debugging...")
-                // console.log(ld_prac_n)
-                // console.log(ld_prac_correct)
-                // console.log(ld_prac_accuracy)
-                if(ld_prac_accuracy >= 50){
-                    return "Accuracy was: "+ld_prac_accuracy+"%."
-                } else {
-                    return "Accuracy was: "+ld_prac_accuracy+"%. Let's practice some more."
-                }
-            },
-            choices: [imageStart+"next-button"+buttonStop],
-            prompt: "",
-            margin_vertical: ['20px']
-        }
-
-        var show_ld_acc = {
-            timeline: [ld_acc],
-            conditional_function: function() {
-                var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep}).count()
-                if(ld_prac_n == 6) { 
-                    return true
-                } else {
-                    return false
-                }
-            }
-        }
-
-
-
 
         /*
         ----------------------
@@ -1024,78 +863,104 @@
         ----------------------
         */
 
-        // if Phase = 2, testing is on day 1 and preceded by teaching trials, so tr_num is correct
-        // if Phase = 3, testing is on day 2 and _not_ preceded by teaching trials, so tr_num
+        function create_recall_trials(){
 
-        var recall_instructions = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will ask you to name the different kinds of aliens. <br> It is ok if you don't remember the entire name. Just say whatever you remember and it is ok to guess. </p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 2 | phase == 3) {
-                    return true
-                } else {
-                    return false
-                }
-            },
-        }
-                
-        timeline.push(recall_instructions)
-
-        // var cur_trials = recall_trials.filter(function(trial){return trial.set === 1})
-        var cur_trials = recall_trials
-
-        for (var i = 0; i < cur_trials.length; i++) {
-
-            // break between recall blocks
-            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
-
-                var recall_break = {
-                    timeline: [mae_screen],
-                    timeline_variables:[
-                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will ask you to name the different kinds of aliens one more time. </p>",
-                        choices: [imageStart+"next-button"+buttonStop]}
-                    ],
-                    conditional_function: function() {
-                        if(phase == 2 | phase == 3) {
-                            return true
-                        } else {
-                            return false
-                        }
-                    },
-                }
-                
-                timeline.push(recall_break)
-            }
-
-            // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
-            var cur_tr_num = cur_trials[i]['tr_num']
-            var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
-            var cur_dur = cur_trials[i]['tr_dur']
-
-            var retrieve_trial = {
-                timeline: [blank_screen,retrieve_prompt,click_advance],
+            var recall_instructions = {
+                timeline: [mae_screen],
                 timeline_variables:[
-                    {tr_num: cur_tr_num,
-                    alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-                    alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-                    name: audioExt+"teaching/prompt.wav",
-                    button: imageStart+"blank-button"+buttonStop,
-                    tr_dur: cur_dur
-                    }
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br>"+
+                        "Mae will ask you to name the different kinds of aliens. <br>"+
+                        "It is ok if you don't remember the entire name. Just say whatever you remember and it is ok to guess. </p>",
+                    choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
                     if(phase == 2 | phase == 3) {
-                        return true;
+                        return true
                     } else {
-                        return false;
+                        return false
+                    }
+                },
+            }
+                    
+            timeline.push(recall_instructions)
+
+            var recall_trial = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                trial_duration: jsPsych.timelineVariable('tr_dur'),
+                stimulus: jsPsych.timelineVariable('name'),
+                choices: jsPsych.timelineVariable('alien'),
+                prompt: "",
+                response_ends_trial: false,
+                block_attribute: ['inline-block','block'],
+                grid_attribute: false,
+                margin_vertical: ['20px']
+            }
+
+            var click_advance = {
+                type: jsPsychHtmlButtonResponseFlexiblelocations,
+                stimulus: "",
+                choices: jsPsych.timelineVariable('alien_click'),
+                prompt: "",
+                block_attribute: ['inline-block','block'],
+                grid_attribute: false,
+                margin_vertical: ['20px']
+            }
+
+            var cur_trials = recall_trials
+
+            for (var i = 0; i < cur_trials.length; i++) {
+
+                var cur_tr_num = cur_trials[i]['tr_num']
+                var cur_alien = imageStart+cur_trials[i]['alien']+imageStop
+                var cur_dur = cur_trials[i]['tr_dur']
+
+                // break between recall blocks
+                if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+
+                    var recall_break = {
+                        timeline: [mae_screen],
+                        timeline_variables:[
+                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br>"+
+                                "Mae will ask you to name the different kinds of aliens one more time. </p>",
+                            choices: [imageStart+"next-button"+buttonStop]}
+                        ],
+                        conditional_function: function() {
+                            if(phase == 2 | phase == 3) {
+                                return true
+                            } else {
+                                return false
+                            }
+                        },
+                    }      
+                    timeline.push(recall_break)
+                }
+
+                var cur_trial = {
+                    timeline: [blank_screen,recall_trial,click_advance],
+                    timeline_variables:[
+                        {tr_num: cur_tr_num,
+                        alien: [cur_alien,imageStart+"blank-button"+buttonStop],
+                        alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
+                        name: audioExt+"teaching/prompt.wav",
+                        button: imageStart+"blank-button"+buttonStop,
+                        tr_dur: cur_dur
+                        }
+                    ],
+                    conditional_function: function() {
+                        if(phase == 2 | phase == 3) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
                 }
+
+                timeline.push(cur_trial)
             }
-            timeline.push(retrieve_trial)
         }
+
+        // create_recall_trials()
+
 
         /*
         --------------------
@@ -1103,115 +968,143 @@
         --------------------
         */
 
-        var form_instructions = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will say three words. <br> Click the dot that matches an alien name you just learned. </p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 2 | phase == 3) {
-                    return true
-                } else {
-                    return false
-                }
-            },
-        }
-                
-        timeline.push(form_instructions)
+        function create_form_trials() {
 
-        // var cur_trials = form_trials.filter(function(trial){return trial.set === 1})
-        var cur_trials = form_trials
-
-        for (var i = 0; i < cur_trials.length; i++) {
-
-            // break between form blocks
-            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
-
-                var form_break = {
-                    timeline: [mae_screen],
-                    timeline_variables:[
-                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will say all the words one more time. <br> Remember to click the dot that matches an alien name you just learned. </p>",
-                        choices: [imageStart+"next-button"+buttonStop]}
-                    ],
-                    conditional_function: function() {
-                        if(phase == 2 | phase == 3) {
-                            return true
-                        } else {
-                            return false
-                        }
-                    },
-                }
-                
-                timeline.push(form_break)
-            }
-
-            // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
-            var cur_tr_num = cur_trials[i]['tr_num']
-            var dot = imageStart+"dot"+numButtonStop
-            var blank_dot = imageStart+"blank-dot"+numButtonStop
-
-            for (var j = 1; j <4; j++) {
-                // each trial will have 3 steps (j=1, 2, 3)
-
-                // for each step, determine the name that will be heard (from trial order)
-                var cur_name = audioExt+"dot/"+cur_trials[i]['sound'+j.toString()]+".wav"
-
-                // determine the number of visible dots (1, 2, then 3)
-                // and blank dots (2, 1, 0) to be displayed
-                var cur_dots = []
-                for (var k = 0; k < j; k++) {
-                    cur_dots.push(dot)
-                }
-                for (var l = 2; l>=j; l--){
-                    cur_dots.push(blank_dot)
-                }
-
-                // only allow a response after the final 3rd step (not 1 or 2)
-                // only log the data after the final 3rd step (not 1 or 2)
-                // steps 1 and 2 each last 1,000 ms (1 sec)
-                // step 3 lasts 10,000ms (10 sec) if the child does not respond
-                if (j == 3) {
-                    var allow_response = true
-                    var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],word:cur_trials[i]['word'],target:cur_trials[i]['target_loc'],correct_response:cur_trials[i]['correct_response']}
-                    var cur_dur = null
-                } else {
-                    var allow_response = false
-                    var cur_data = {}
-                    var cur_dur = 1000
-                }
-                
-                // show the trial number followed by a blank screen before the 1st step
-                // but not before the 2nd and 3rd step
-                if (j == 1) {
-                    var cur_timeline = [blank_screen,form_prompt]
-                } else {
-                    var cur_timeline = [form_prompt]
-                }
-
-                var form_trial = {
-                timeline: cur_timeline,
+            var form_instructions = {
+                timeline: [mae_screen],
                 timeline_variables:[
-                    {tr_num: cur_tr_num,
-                    name: cur_name,
-                    dots: cur_dots,
-                    response: allow_response,
-                    tr_dur: cur_dur,
-                    log_data: allow_response,
-                    data: cur_data
-                    }
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will say three words. <br> Click the dot that matches an alien name you just learned. </p>",
+                    choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
                     if(phase == 2 | phase == 3) {
-                        return true;
+                        return true
                     } else {
-                        return false;
+                        return false
+                    }
+                },
+            }
+                    
+            timeline.push(form_instructions)
+
+            var form_prompt = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                stimulus: jsPsych.timelineVariable('name'),
+                choices: jsPsych.timelineVariable('dots'),
+                prompt: "",
+                block_attribute: ['inline-block','inline-block','inline-block'],
+                response_ends_trial: jsPsych.timelineVariable('response'),
+                trial_duration: jsPsych.timelineVariable('tr_dur'),
+                grid_attribute: false,
+                margin_vertical: ['10px'],
+                margin_horizontal: ['100px'],
+                data: jsPsych.timelineVariable('data'),
+                on_finish: function(data){
+                    if (jsPsych.timelineVariable('log_data')) {
+                        data.phase = phase
+                        data.test_tr_type = 'test_form'
+                        data.correct = data.response == data.correct_response
                     }
                 }
             }
-            timeline.push(form_trial)
+
+            var cur_trials = form_trials
+
+            for (var i = 0; i < cur_trials.length; i++) {
+
+                var cur_tr_num = cur_trials[i]['tr_num']
+                var dot = imageStart+"dot"+numButtonStop
+                var blank_dot = imageStart+"blank-dot"+numButtonStop
+
+                // break between form blocks
+                if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+
+                    var form_break = {
+                        timeline: [mae_screen],
+                        timeline_variables:[
+                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will say all the words one more time. <br> Remember to click the dot that matches an alien name you just learned. </p>",
+                            choices: [imageStart+"next-button"+buttonStop]}
+                        ],
+                        conditional_function: function() {
+                            if(phase == 2 | phase == 3) {
+                                return true
+                            } else {
+                                return false
+                            }
+                        },
+                    }
+                    
+                    timeline.push(form_break)
+                }
+
+
+                for (var j = 1; j <4; j++) {
+                    // each trial will have 3 steps (j=1, 2, 3)
+
+                    // for each step, determine the name that will be heard (from trial order)
+                    var cur_name = audioExt+"dot/"+cur_trials[i]['sound'+j.toString()]+".wav"
+
+                    // determine the number of visible dots (1, 2, then 3)
+                    // and blank dots (2, 1, 0) to be displayed
+                    var cur_dots = []
+                    for (var k = 0; k < j; k++) {
+                        cur_dots.push(dot)
+                    }
+                    for (var l = 2; l>=j; l--){
+                        cur_dots.push(blank_dot)
+                    }
+
+                    // only allow a response after the final 3rd step (not 1 or 2)
+                    // only log the data after the final 3rd step (not 1 or 2)
+                    // steps 1 and 2 each last 1,000 ms (1 sec)
+                    // step 3 lasts 10,000ms (10 sec) if the child does not respond
+                    if (j == 3) {
+                        var allow_response = true
+                        var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],word:cur_trials[i]['word'],target:cur_trials[i]['target_loc'],correct_response:cur_trials[i]['correct_response']}
+                        var cur_dur = null
+                    } else {
+                        var allow_response = false
+                        var cur_data = {}
+                        var cur_dur = 1000
+                    }
+                    
+                    // show the trial number followed by a blank screen before the 1st step
+                    // but not before the 2nd and 3rd step
+                    if (j == 1) {
+                        var cur_timeline = [blank_screen,form_prompt]
+                    } else {
+                        var cur_timeline = [form_prompt]
+                    }
+
+                    var form_trial = {
+                        timeline: cur_timeline,
+                        timeline_variables:[
+                            {tr_num: cur_tr_num,
+                            name: cur_name,
+                            dots: cur_dots,
+                            response: allow_response,
+                            tr_dur: cur_dur,
+                            log_data: allow_response,
+                            data: cur_data
+                            }
+                        ],
+                        conditional_function: function() {
+                            if(phase == 2 | phase == 3) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+
+                    timeline.push(form_trial)
+                }
+            }
+
         }
-    }
+
+        create_form_trials()
+
 
         /*
         ----------------------
@@ -1219,117 +1112,107 @@
         ----------------------
         */
 
-        var link_instructions = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will show you three aliens and say one of their names. <br> Click the alien that goes with that name. </p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 2 | phase == 3) {
-                    return true
-                } else {
-                    return false
-                }
-            },
-        }
-                
-        timeline.push(link_instructions)
+        function create_link_trials() {
 
-        // var cur_trials = link_trials.filter(function(trial){return trial.set === 1})
-        var cur_trials = link_trials
-
-        for (var i = 0; i < cur_trials.length; i++) {
-
-            // break between link blocks
-            if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
-                var link_break = {
-                    timeline: [mae_screen],
-                    timeline_variables:[
-                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br> Mae will show you the aliens and say their names one more time. <br> Remember to click the alien that goes with that name. </p>",
-                        choices: [imageStart+"next-button"+buttonStop]}
-                    ],
-                    conditional_function: function() {
-                        if(phase == 2 | phase == 3) {
-                            return true
-                        } else {
-                            return false
-                        }
-                    },
-                }
-                
-                timeline.push(link_break)
-            }
-
-            // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
-            var cur_tr_num = cur_trials[i]['tr_num']
-
-            var cur_name = audioExt+"link/"+cur_trials[i]['audio']+".wav"
-
-            var cur_aliens = []
-            cur_aliens.push(imageStart+cur_trials[i]['top_left']+imageStop)
-            cur_aliens.push(imageStart+cur_trials[i]['top_right']+imageStop)
-            cur_aliens.push(imageStart+cur_trials[i]['bottom_left']+imageStop)
-            cur_aliens.push(imageStart+cur_trials[i]['bottom_right']+imageStop)
-
-            // editing REDCap data
-            var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],word:cur_trials[i]['audio'],alien:cur_trials[i]['alien'],target:cur_trials[i]['target_loc'],correct_response:cur_trials[i]['correct_response']}
-
-            var link_trial = {
-                timeline: [blank_screen,link_prompt],
+            var link_instructions = {
+                timeline: [mae_screen],
                 timeline_variables:[
-                    {tr_num: cur_tr_num,
-                    name: cur_name,
-                    aliens: cur_aliens,
-                    response: true,
-                    tr_dur: null,
-                    data: cur_data
-                    }
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br>"+
+                        "Mae will show you three aliens and say one of their names. <br>"+
+                        "Click the alien that goes with that name. </p>",
+                    choices: [imageStart+"next-button"+buttonStop]}
                 ],
                 conditional_function: function() {
                     if(phase == 2 | phase == 3) {
-                        return true;
+                        return true
                     } else {
-                        return false;
+                        return false
+                    }
+                },
+            }
+                
+            timeline.push(link_instructions)
+
+            var link_prompt = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                stimulus: jsPsych.timelineVariable('name'),
+                choices: jsPsych.timelineVariable('aliens'),
+                prompt: "",
+                response_ends_trial: jsPsych.timelineVariable('response'),
+                trial_duration: jsPsych.timelineVariable('tr_dur'),
+                grid_attribute: true,
+                margin_vertical: ['10px'],
+                data: jsPsych.timelineVariable('data'),
+                on_finish: function(data){
+                    data.phase = phase
+                    data.test_tr_type = 'test_link'
+                    data.correct = data.response == data.correct_response
+                }
+            }
+
+            var cur_trials = link_trials
+
+            for (var i = 0; i < cur_trials.length; i++) {
+
+                var cur_tr_num = cur_trials[i]['tr_num']
+
+                var cur_name = audioExt+"link/"+cur_trials[i]['audio']+".wav"
+
+                var cur_aliens = []
+                cur_aliens.push(imageStart+cur_trials[i]['top_left']+imageStop)
+                cur_aliens.push(imageStart+cur_trials[i]['top_right']+imageStop)
+                cur_aliens.push(imageStart+cur_trials[i]['bottom_left']+imageStop)
+                cur_aliens.push(imageStart+cur_trials[i]['bottom_right']+imageStop)
+
+                var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],word:cur_trials[i]['audio'],alien:cur_trials[i]['alien'],target:cur_trials[i]['target_loc'],correct_response:cur_trials[i]['correct_response']}
+
+                // break between link blocks
+                if (cur_trials[i]['block'] > 1 && cur_trials[i]['block_tr_num'] == 1) {
+                    var link_break = {
+                        timeline: [mae_screen],
+                        timeline_variables:[
+                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br>"+
+                                "Mae will show you the aliens and say their names one more time. <br>"+
+                                "Remember to click the alien that goes with that name. </p>",
+                            choices: [imageStart+"next-button"+buttonStop]}
+                        ],
+                        conditional_function: function() {
+                            if(phase == 2 | phase == 3) {
+                                return true
+                            } else {
+                                return false
+                            }
+                        },
+                    }
+                    
+                    timeline.push(link_break)
+                }
+
+                var link_trial = {
+                    timeline: [blank_screen,link_prompt],
+                    timeline_variables:[
+                        {tr_num: cur_tr_num,
+                        name: cur_name,
+                        aliens: cur_aliens,
+                        response: true,
+                        tr_dur: null,
+                        data: cur_data
+                        }
+                    ],
+                    conditional_function: function() {
+                        if(phase == 2 | phase == 3) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
                 }
+                timeline.push(link_trial)
             }
-            timeline.push(link_trial)
+
         }
 
-        var mae_testing_end_2 = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job!<br><br> You are all done for today! </p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 2) {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        }
-
-        // timeline.push(mae_testing_end_2)
-
-        var mae_testing_end_3 = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's play a different game.<br><br> We will come back to Mae and her alien friends again soon! </p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 3) {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        }
-
-        // timeline.push(mae_testing_end_3)
+        create_link_trials()
 
 
         /*
@@ -1338,164 +1221,295 @@
         --------------------------------
         */
 
-        var cur_trials = ld_trials
+        function create_ld_trials() {
 
-        var ld_instructions = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:30px;'>Mae has learned so many alien words. <br>She sometimes gets confused about which words are English. <br><br> Mae will say some words. <br><br>If it is a real word in English, click on the smiley face. <br> If it is a made-up word, click on the frowny face. </p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 4) {
-                    return true
-                } else {
-                    return false
-                }
-            },
-        }
-                
-        timeline.push(ld_instructions)
-
-        // Complete 6 practice trials with feedback
-        // Repeat once more if accuracy < 50%
-
-        var prac_trials = [
-        {word:'cat.wav',name:'cat',klatt:'k@t',type:'familiar',neighbor:'cat',correct_response:0},
-        {word:'wat.wav',name:'cat',klatt:'w@t',type:'novel',neighbor:'wat',correct_response:1},
-        {word:'habby.wav',name:'happy',klatt:'h@bi',type:'novel',neighbor:'habby',correct_response:1},
-        {word:'happy.wav',name:'happy',klatt:'h@bi',type:'familiar',neighbor:'happy',correct_response:0},
-        {word:'run.wav',name:'run',klatt:'r^n',type:'familiar',neighbor:'run',correct_response:0},
-        {word:'rin.wav',name:'run',klatt:'rIn',type:'novel',neighbor:'rin',correct_response:1}]
-
-        var do_practice = true;
-
-        for (var loop = 1; loop < 3; loop ++) {
-
-            for (var i = 0; i < prac_trials.length; i++) {
-                var ld_prac_trial = {
-                    timeline: [blank_screen,ld_prompt],
-                    // timeline: [blank_screen,ld_prompt,ld_feedback,show_ld_acc],
-                    timeline_variables:[
-                        {name: audioExt+"LD/"+prac_trials[i]['word'],
-                        ortho: prac_trials[i]['name']+" /"+prac_trials[i]['klatt']+"/",
-                        response: true,
-                        // tr_dur: 10000,
-                        tr_dur: null,
-                        data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
-                        }
-                    ],
-                    conditional_function: function() {
-
-                        var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                        var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
-                        var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
-                        var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
-                        // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
-
-                        if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
-
-                        if(phase == 4 && do_practice) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+            var ld_instructions = {
+                timeline: [mae_screen],
+                timeline_variables:[
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:30px;'>Mae has learned so many alien words. <br>She sometimes gets confused about which words are English. <br><br> Mae will say some words. <br><br>If it is a real word in English, click on the smiley face. <br> If it is a made-up word, click on the frowny face. </p>",
+                    choices: [imageStart+"next-button"+buttonStop]}
+                ],
+                conditional_function: function() {
+                    if(phase == 4) {
+                        return true
+                    } else {
+                        return false
                     }
-                }
-                timeline.push(ld_prac_trial)
-
-                var ld_prac_trial_repeat = {
-                    timeline: [ld_prompt_repeat],
-                    timeline_variables:[
-                        {name: audioExt+"LD/"+prac_trials[i]['word'],
-                        ortho: prac_trials[i]['name']+" /"+prac_trials[i]['klatt']+"/",
-                        response: true,
-                        // tr_dur: 10000,
-                        tr_dur: null,
-                        data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
-                        }
-                    ],
-                    conditional_function: function() {
-
-                        var replay = jsPsych.data.get().last(1).select('response')['values'] == 2
-
-                        var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                        var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
-                        var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
-                        var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
-                        // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
-
-                        if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
-
-                        if(phase == 4 && do_practice && replay) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-                timeline.push(ld_prac_trial_repeat)
-
-                var ld_prac_feedback = {
-                    timeline: [ld_feedback],
-                    // timeline_variables:[{data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']}}], // ron update to pull set from global variable set by URL}
-                    conditional_function: function() {
-                        var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                        var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
-                        var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
-                        var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
-                        // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
-
-                        if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
-
-                        if(phase == 4 && do_practice) {
-                            return true;
-                        } else {
-                            return false;
-                        }    
-                    }
-                }
-                timeline.push(ld_prac_feedback)
+                },
             }
-        }
+                    
+            timeline.push(ld_instructions)
 
-        var ld_start = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:30px;'>Great job!<br><br> Now it's time for you to do some more on your own.</p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 4) {
-                    return true
-                } else {
-                    return false
+            var ld_prompt = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                stimulus: jsPsych.timelineVariable('name'),
+                choices: [imageStart+"smiley-face"+squareButtonStop,imageStart+"frowny-face"+squareButtonStop,imageStart+"replay-button"+numButtonStop],
+                prompt: jsPsych.timelineVariable('ortho'),
+                block_attribute: ['inline-block','inline-block','block'],
+                response_ends_trial: jsPsych.timelineVariable('response'),
+                trial_duration: jsPsych.timelineVariable('tr_dur'),
+                grid_attribute: false,
+                margin_vertical: ['30px'],
+                margin_horizontal: ['100px'],
+                data: jsPsych.timelineVariable('data'),
+                on_finish: function(data){
+                    data.phase = phase
+                    data.test_tr_type = 'test_ld'
+                    // data.tr_num_disp = cur_tr_num
+                    if (data.response == 2) {
+                        data.repeated = 'yes'
+                        data.correct = null
+                        data.accuracy = null
+                    } else {
+                        data.repeated = 'no'
+                        data.correct = data.response == data.correct_response
+                        if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
+                    }
+                    // console.log(data)
                 }
-            },
-        }
-                
-        timeline.push(ld_start)
+            }
 
-        for (var i = 0; i < cur_trials.length; i++) {
-            
-            // break between ld blocks 5 & 6 (i.e., half-way point)
-            if (cur_trials[i]['block'] == 6 && cur_trials[i]['block_tr_num'] == 1) {
+            var ld_prompt_repeat = {
+                type: jsPsychAudioButtonResponseFlexiblelocations,
+                stimulus: jsPsych.timelineVariable('name'),
+                choices: [imageStart+"smiley-face-long"+emojiButtonStop,imageStart+"frowny-face-long"+emojiButtonStop],
+                prompt: jsPsych.timelineVariable('ortho'),
+                block_attribute: ['inline-block','inline-block'],
+                response_ends_trial: jsPsych.timelineVariable('response'),
+                trial_duration: jsPsych.timelineVariable('tr_dur'),
+                grid_attribute: true,
+                margin_vertical: ['30px'],
+                margin_horizontal: ['100px'],
+                data: jsPsych.timelineVariable('data'),
+                on_finish: function(data){
+                    data.phase = phase
+                    data.test_tr_type = 'test_ld'
+                    // data.tr_num_disp = cur_tr_num
+                    data.repeated = 'no'
+                    data.correct = data.response == data.correct_response
+                    if(data.correct) {data.accuracy = 1} else {data.accuracy = 0}
+                    // console.log(data)
+                }
+            }
 
-                // keep_coloring = true
+            var ld_feedback = {
+                type: jsPsychHtmlButtonResponseFlexiblelocations,
+                stimulus: function(){
+                    var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+                    // console.log(last_trial_correct)
+                    if(last_trial_correct){
+                        return imageStart+'correct'+squareButtonStop
+                    } else {
+                        return imageStart+'incorrect'+squareButtonStop
+                    }
+                },
+                choices: [imageStart+"next-button"+buttonStop],
+                prompt: "",
+                margin_vertical: ['20px']
+            }
 
-                for (var min = 5; min > 0; min--) {
+            var ld_acc = {
+                type: jsPsychHtmlButtonResponseFlexiblelocations,
+                stimulus: function(){
+                    var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
+                    var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep})
+                    var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
+                    var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
+                    // console.log("debugging...")
+                    // console.log(ld_prac_n)
+                    // console.log(ld_prac_correct)
+                    // console.log(ld_prac_accuracy)
+                    if(ld_prac_accuracy >= 50){
+                        return "Accuracy was: "+ld_prac_accuracy+"%."
+                    } else {
+                        return "Accuracy was: "+ld_prac_accuracy+"%. Let's practice some more."
+                    }
+                },
+                choices: [imageStart+"next-button"+buttonStop],
+                prompt: "",
+                margin_vertical: ['20px']
+            }
 
-                    // console.log("ld break with "+min.toString()+"minutes left")
-                    // console.log(keep_coloring)
+            var show_ld_acc = {
+                timeline: [ld_acc],
+                conditional_function: function() {
+                    var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
+                    var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep}).count()
+                    if(ld_prac_n == 6) { 
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            }
 
-                    var ld_break = {
-                        timeline: [mae_timer],
+            // PRACTICE TRIALS
+                // 6 with feedback
+                // Repeat once more if accuracy < 50%
+
+            var cur_trials = ld_trials
+
+            var prac_trials = [
+            {word:'cat.wav',name:'cat',klatt:'k@t',type:'familiar',neighbor:'cat',correct_response:0},
+            {word:'wat.wav',name:'wat',klatt:'w@t',type:'novel',neighbor:'wat',correct_response:1},
+            {word:'habby.wav',name:'habby',klatt:'h@bi',type:'novel',neighbor:'habby',correct_response:1},
+            {word:'happy.wav',name:'happy',klatt:'h@pi',type:'familiar',neighbor:'happy',correct_response:0},
+            {word:'run.wav',name:'run',klatt:'r^n',type:'familiar',neighbor:'run',correct_response:0},
+            {word:'rin.wav',name:'rin',klatt:'rIn',type:'novel',neighbor:'rin',correct_response:1}]
+
+            var do_practice = true;
+
+            for (var loop = 1; loop < 3; loop ++) {
+
+                for (var i = 0; i < prac_trials.length; i++) {
+
+                    var ld_prac_trial = {
+                        timeline: [blank_screen,ld_prompt],
                         timeline_variables:[
-                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's take a break to color.<br><br> We have "+min.toString()+" minutes left to color.</p>",
+                            {name: audioExt+"LD/"+prac_trials[i]['word'],
+                            ortho: "<p style='font-size:40px;'>"+prac_trials[i]['name']+" /"+prac_trials[i]['klatt']+"/</p>",
+                            response: true,
+                            tr_dur: null,
+                            data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
+                            }
+                        ],
+                        conditional_function: function() {
+
+                            var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
+                            var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
+                            var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
+                            var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
+                            // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
+
+                            if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
+
+                            if(phase == 4 && do_practice) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+
+                    timeline.push(ld_prac_trial)
+
+                    var ld_prac_trial_repeat = {
+                        timeline: [ld_prompt_repeat],
+                        timeline_variables:[
+                            {name: audioExt+"LD/"+prac_trials[i]['word'],
+                            ortho: "<p style='font-size:40px;'>"+prac_trials[i]['name']+" /"+prac_trials[i]['klatt']+"/</p>",
+                            response: true,
+                            tr_dur: null,
+                            data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
+                            }
+                        ],
+                        conditional_function: function() {
+
+                            var replay = jsPsych.data.get().last(1).select('response')['values'] == 2
+
+                            var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
+                            var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
+                            var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
+                            var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
+                            // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
+
+                            if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
+
+                            if(phase == 4 && do_practice && replay) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+
+                    timeline.push(ld_prac_trial_repeat)
+
+                    var ld_prac_feedback = {
+                        timeline: [ld_feedback],
+                        // timeline_variables:[{data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']}}], // ron update to pull set from global variable set by URL}
+                        conditional_function: function() {
+                            var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
+                            var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
+                            var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
+                            var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
+                            // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
+
+                            if(ld_prac_n.count()==6 && ld_prac_accuracy >= 50) {do_practice = false}
+
+                            if(phase == 4 && do_practice) {
+                                return true;
+                            } else {
+                                return false;
+                            }    
+                        }
+                    }
+
+                    timeline.push(ld_prac_feedback)
+                }
+            }
+
+            // TEST TRIALS
+            // keep_coloring = true
+
+            var ld_start = {
+                timeline: [mae_screen],
+                timeline_variables:[
+                    {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:30px;'>Great job!<br><br>"+
+                        "Now it's time for you to do some more on your own.</p>",
+                    choices: [imageStart+"next-button"+buttonStop]}
+                ],
+                conditional_function: function() {
+                    if(phase == 4) {
+                        return true
+                    } else {
+                        return false
+                    }
+                },
+            }
+                    
+            timeline.push(ld_start)
+
+            for (var i = 0; i < cur_trials.length; i++) {
+
+                var cur_tr_num = cur_trials[i]['tr_num']
+                var cur_name = audioExt+"LD/"+cur_trials[i]['audio']+".wav"
+                var cur_ortho = "<p style='font-size:40px;'>"+cur_trials[i]['audio']+" /"+cur_trials[i]['klatt']+"/</p>"
+                var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['ld_tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],neighborhood:cur_trials[i]['neighborhood'],expected:cur_trials[i]['expected'],type:cur_trials[i]['type'],word:cur_trials[i]['audio'],klatt:cur_trials[i]['klatt'],correct_response:cur_trials[i]['correct_response']}
+
+                
+                // break between ld blocks 5 & 6 (i.e., half-way point)
+                if (cur_trials[i]['block'] == 6 && cur_trials[i]['block_tr_num'] == 1) {
+
+                    for (var min = 5; min > 0; min--) {
+
+                        var ld_break = {
+                            timeline: [mae_timer],
+                            timeline_variables:[
+                                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! Let's take a break to color.<br><br>"+
+                                    "We have "+min.toString()+" minutes left to color.</p>",
+                                choices: [imageStart+"next-button"+buttonStop]}
+                            ],
+                            conditional_function: function() {
+                                if(phase == 4 && keep_coloring) {
+                                    return true
+                                } else {
+                                    return false
+                                }
+                            }
+                        }
+
+                        timeline.push(ld_break)
+                    }
+
+                    var ld_break_end = {
+                        timeline: [mae_screen],
+                        timeline_variables:[
+                            {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Let's come back to Mae and her alien friends again!</p>",
                             choices: [imageStart+"next-button"+buttonStop]}
                         ],
                         conditional_function: function() {
-                            if(phase == 4 && keep_coloring) {
+                            if(phase == 4) {
                                 return true
                             } else {
                                 return false
@@ -1503,101 +1517,61 @@
                         }
                     }
 
-                    timeline.push(ld_break)
+                    timeline.push(ld_break_end)
+
                 }
 
-                var ld_break_end = {
-                    timeline: [mae_screen],
+                var ld_trial = {
+                    timeline: [blank_screen,ld_prompt],
                     timeline_variables:[
-                        {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Let's come back to Mae and her alien friends again!</p>",
-                        choices: [imageStart+"next-button"+buttonStop]}
+                        {tr_num: cur_tr_num,
+                        name: cur_name,
+                        ortho: cur_ortho,
+                        response: true,
+                        tr_dur: null,
+                        data: cur_data
+                        }
                     ],
                     conditional_function: function() {
                         if(phase == 4) {
-                            return true
+                            return true;
                         } else {
-                            return false
+                            return false;
                         }
                     }
                 }
+                timeline.push(ld_trial)
 
-                timeline.push(ld_break_end)
-
-            }
-
-            // var cur_tr_num = adjust_tr_num(cur_trials[i]['tr_num'])
-            var cur_tr_num = cur_trials[i]['tr_num']
-
-            var cur_name = audioExt+"LD/"+cur_trials[i]['audio']+".wav"
-            var cur_ortho = cur_trials[i]['audio']+" /"+cur_trials[i]['klatt']+"/"
-            var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['ld_tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],neighborhood:cur_trials[i]['neighborhood'],expected:cur_trials[i]['expected'],type:cur_trials[i]['type'],word:cur_trials[i]['audio'],klatt:cur_trials[i]['klatt'],correct_response:cur_trials[i]['correct_response']}
-
-            var ld_trial = {
-                timeline: [blank_screen,ld_prompt],
-                timeline_variables:[
-                    {tr_num: cur_tr_num,
-                    name: cur_name,
-                    ortho: cur_ortho,
-                    response: true,
-                    // tr_dur: 10000,
-                    tr_dur: null,
-                    data: cur_data
-                    }
-                ],
-                conditional_function: function() {
-                    if(phase == 4) {
-                        return true;
-                    } else {
-                        return false;
+                var ld_trial_repeat = {
+                    timeline: [ld_prompt_repeat],
+                    timeline_variables:[
+                        {tr_num: cur_tr_num,
+                        name: cur_name,
+                        ortho: cur_ortho,
+                        response: true,
+                        tr_dur: null,
+                        data: cur_data
+                        }
+                    ],
+                    conditional_function: function() {
+                        var replay = jsPsych.data.get().last(1).select('response')['values'] == 2
+                        if(phase == 4 && replay) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
                 }
-            }
-            timeline.push(ld_trial)
+                timeline.push(ld_trial_repeat)
 
-            var ld_trial_repeat = {
-                timeline: [ld_prompt_repeat],
-                timeline_variables:[
-                    {tr_num: cur_tr_num,
-                    name: cur_name,
-                    ortho: cur_ortho,
-                    response: true,
-                    // tr_dur: 10000,
-                    tr_dur: null,
-                    data: cur_data
-                    }
-                ],
-                conditional_function: function() {
-                    var replay = jsPsych.data.get().last(1).select('response')['values'] == 2
-                    if(phase == 4 && replay) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
             }
-            timeline.push(ld_trial_repeat)
+
 
         }
 
-        var ld_end = {
-            timeline: [mae_screen],
-            timeline_variables:[
-                {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:30px;'>Great job!<br><br> You are all done for today! </p>",
-                choices: [imageStart+"next-button"+buttonStop]}
-            ],
-            conditional_function: function() {
-                if(phase == 4) {
-                    return true
-                } else {
-                    return false
-                }
-            },
-        }
-                
-        // timeline.push(ld_end)
-        
+        create_ld_trials()
 
-    return timeline
+        return timeline
 
     }
 
