@@ -155,7 +155,7 @@
                     "token=" +
                         token +
                         "&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=false&data=[" +
-                        JSON.stringify({record_id: id, subject_num: subject_id, date: JSON.stringify(DoT), order: trial_order, week: filter_week, phase: global_phase.phase,
+                        JSON.stringify({record_id: id, subject_num: subject_id, date: JSON.stringify(DoT), order: trial_order, phase: global_phase.phase,
                             results_form:jsPsych.data.get().filter({test_tr_type: 'test_form'}).json(),
                             results_link:jsPsych.data.get().filter({test_tr_type: 'test_link'}).json(),
                             results_ld:jsPsych.data.get().filter({test_tr_type: 'test_ld'}).json()
@@ -1118,7 +1118,7 @@
                 timeline: [mae_screen],
                 timeline_variables:[
                     {stimulus: imageStart+"mae"+imageStop+"<p style='font-size:32px;'>Great job! <br><br>"+
-                        "Mae will show you three aliens and say one of their names. <br>"+
+                        "Mae will show you four aliens and say one of their names. <br>"+
                         "Click the alien that goes with that name. </p>",
                     choices: [imageStart+"next-button"+buttonStop]}
                 ],
@@ -1350,33 +1350,57 @@
             var cur_trials = ld_trials
 
             var prac_trials = [
-            {word:'cat.wav',name:'cat',klatt:'k@t',type:'familiar',neighbor:'cat',correct_response:0},
-            {word:'wat.wav',name:'wat',klatt:'w@t',type:'novel',neighbor:'wat',correct_response:1},
-            {word:'habby.wav',name:'habby',klatt:'h@bi',type:'novel',neighbor:'habby',correct_response:1},
-            {word:'happy.wav',name:'happy',klatt:'h@pi',type:'familiar',neighbor:'happy',correct_response:0},
-            {word:'run.wav',name:'run',klatt:'r^n',type:'familiar',neighbor:'run',correct_response:0},
-            {word:'rin.wav',name:'rin',klatt:'rIn',type:'novel',neighbor:'rin',correct_response:1}]
+            {word:'cat',klatt:'k@t',condition:'practice',type:'familiar',expected:'known',neighborhood:'cat',correct_response:0},
+            {word:'wat',klatt:'w@t',condition:'practice',type:'novel',expected:'unknown',neighborhood:'cat',correct_response:1},
+            {word:'habby',klatt:'h@bi',condition:'practice',type:'novel',expected:'unknown',neighborhood:'happy',correct_response:1},
+            {word:'happy',klatt:'h@pi',condition:'practice',type:'familiar',expected:'known',neighborhood:'happy',correct_response:0},
+            {word:'run',klatt:'r^n',condition:'practice',type:'familiar',expected:'known',neighborhood:'run',correct_response:0},
+            {word:'rin',klatt:'rIn',condition:'practice',type:'novel',expected:'unknown',neighborhood:'run',correct_response:1}]
+
+            // {order:cur_trials[i]['order'],
+            // block:cur_trials[i]['block'],
+            // tr_num:cur_trials[i]['tr_num'],
+            // block_tr_num:cur_trials[i]['block_tr_num'],
+            // condition:cur_trials[i]['condition'],
+            // neighborhood:cur_trials[i]['neighborhood'],
+            // expected:cur_trials[i]['expected'],
+            // type:cur_trials[i]['type'],
+            // word:cur_trials[i]['audio'],
+            // klatt:cur_trials[i]['klatt'],
+            // correct_response:cur_trials[i]['correct_response']}
 
             var do_practice = true;
 
             for (var loop = 1; loop < 3; loop ++) {
 
-                for (var i = 0; i < prac_trials.length; i++) {
+                for (var i = 0; i < prac_trials.length; i++) {                
+                    
+                    // console.log(loop)
+                    // console.log(i)
+                    cur_data = prac_trials[i]
+                    // cur_data.order = cur_trials[1]['order']
+                    // cur_data.block = loop
+                    // if(loop == 1){cur_data.tr_num = i+1}
+                    // if(loop == 2){cur_data.tr_num = i+7}
+                    // cur_data.block_tr_num = i+1
+                    // console.log(cur_data)
+
 
                     var ld_prac_trial = {
-                        timeline: [blank_screen,ld_prompt],
+                        timeline: [ld_prompt],
                         timeline_variables:[
-                            {name: audioExt+"LD/"+prac_trials[i]['word'],
-                            ortho: "<p style='font-size:40px;'>"+prac_trials[i]['name']+" /"+prac_trials[i]['klatt']+"/</p>",
+                            {name: audioExt+"LD/"+prac_trials[i]['word']+".wav",
+                            ortho: "<p style='font-size:40px;'>"+prac_trials[i]['word']+" /"+prac_trials[i]['klatt']+"/</p>",
                             response: true,
                             tr_dur: null,
-                            data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
+                            data: {...cur_data,...{order:cur_trials[1]['order'],block:loop,block_tr_num:i+1}}
+                            // {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
                             }
                         ],
                         conditional_function: function() {
-
-                            var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                            var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
+    
+                            var cur_rep = jsPsych.data.get().filter({condition:"practice"}).select('block').max()
+                            var ld_prac_n = jsPsych.data.get().filter({condition:"practice",block:cur_rep,repeated:'no'})
                             var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
                             var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
                             // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
@@ -1396,19 +1420,19 @@
                     var ld_prac_trial_repeat = {
                         timeline: [ld_prompt_repeat],
                         timeline_variables:[
-                            {name: audioExt+"LD/"+prac_trials[i]['word'],
-                            ortho: "<p style='font-size:40px;'>"+prac_trials[i]['name']+" /"+prac_trials[i]['klatt']+"/</p>",
+                            {name: audioExt+"LD/"+prac_trials[i]['word']+".wav",
+                            ortho: "<p style='font-size:40px;'>"+prac_trials[i]['word']+" /"+prac_trials[i]['klatt']+"/</p>",
                             response: true,
                             tr_dur: null,
-                            data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']} // ron update to pull set from global variable set by URL
+                            data: {...cur_data,...{order:cur_trials[1]['order'],block:loop,block_tr_num:i+1}}
                             }
                         ],
                         conditional_function: function() {
 
                             var replay = jsPsych.data.get().last(1).select('response')['values'] == 2
 
-                            var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                            var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
+                            var cur_rep = jsPsych.data.get().filter({condition:"practice"}).select('block').max()
+                            var ld_prac_n = jsPsych.data.get().filter({condition:"practice",block:cur_rep,repeated:'no'})
                             var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
                             var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
                             // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
@@ -1427,10 +1451,9 @@
 
                     var ld_prac_feedback = {
                         timeline: [ld_feedback],
-                        // timeline_variables:[{data: {week:cur_trials[1]['week'],order:cur_trials[1]['order'],set:cur_trials[1]['set'],block:loop,tr_num_ld:0,condition:'ld_practice',target:prac_trials[i]['name'],type:prac_trials[i]['type'],neighbor:prac_trials[i]['neighbor'],correct_response:prac_trials[i]['correct_response']}}], // ron update to pull set from global variable set by URL}
                         conditional_function: function() {
-                            var cur_rep = jsPsych.data.get().filter({condition:"ld_practice"}).select('block').max()
-                            var ld_prac_n = jsPsych.data.get().filter({condition:"ld_practice",block:cur_rep,repeated:'no'})
+                            var cur_rep = jsPsych.data.get().filter({condition:"practice"}).select('block').max()
+                            var ld_prac_n = jsPsych.data.get().filter({condition:"practice",block:cur_rep,repeated:'no'})
                             var ld_prac_correct = ld_prac_n.filter({correct:true}).count()
                             var ld_prac_accuracy = Math.round(ld_prac_correct/ld_prac_n.count()*100)
                             // console.log("cur rep:",cur_rep,", prac_n:",ld_prac_n,", prac_correct:",ld_prac_correct,", prac_acc:",ld_prac_accuracy)
@@ -1475,7 +1498,7 @@
                 var cur_tr_num = cur_trials[i]['tr_num']
                 var cur_name = audioExt+"LD/"+cur_trials[i]['audio']+".wav"
                 var cur_ortho = "<p style='font-size:40px;'>"+cur_trials[i]['audio']+" /"+cur_trials[i]['klatt']+"/</p>"
-                var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['ld_tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],neighborhood:cur_trials[i]['neighborhood'],expected:cur_trials[i]['expected'],type:cur_trials[i]['type'],word:cur_trials[i]['audio'],klatt:cur_trials[i]['klatt'],correct_response:cur_trials[i]['correct_response']}
+                var cur_data = {order:cur_trials[i]['order'],block:cur_trials[i]['block'],tr_num:cur_trials[i]['tr_num'],block_tr_num:cur_trials[i]['block_tr_num'],condition:cur_trials[i]['condition'],neighborhood:cur_trials[i]['neighborhood'],expected:cur_trials[i]['expected'],type:cur_trials[i]['type'],word:cur_trials[i]['audio'],klatt:cur_trials[i]['klatt'],correct_response:cur_trials[i]['correct_response']}
 
                 
                 // break between ld blocks 5 & 6 (i.e., half-way point)
@@ -1522,7 +1545,7 @@
                 }
 
                 var ld_trial = {
-                    timeline: [blank_screen,ld_prompt],
+                    timeline: [ld_prompt],
                     timeline_variables:[
                         {tr_num: cur_tr_num,
                         name: cur_name,
