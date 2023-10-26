@@ -1,0 +1,17 @@
+﻿order,block,raw,rand,tr_num,block_tr_num,condition,word,target_loc,sound1,sound2,sound3,correct_response
+2A,1,1,114,1,1,high,fidge,L,fidge,hidge,bidge,0
+2A,1,3,228,2,2,high,meeb,C,meeg,meeb,meef,1
+2A,1,6,232,3,3,low,vib,C,zib,vib,kib,1
+2A,1,5,324,4,4,low,wath,R,wab,was,wath,2
+2A,1,4,325,5,5,high,soog,L,soog,boog,toog,0
+2A,1,7,466,6,6,low,nez,L,nez,nep,neth,0
+2A,1,8,885,7,7,low,chouse,R,shouse,gouse,chouse,2
+2A,1,2,954,8,8,high,cuth,R,cug,cush,cuth,2
+2A,2,13,51,9,1,low,wath,L,wath,was,wab,0
+2A,2,10,60,10,2,high,cuth,L,cuth,cush,cug,0
+2A,2,14,130,11,3,low,vib,R,kib,zib,vib,2
+2A,2,15,541,12,4,low,nez,C,neth,nez,nep,1
+2A,2,11,571,13,5,high,meeb,R,meef,meeg,meeb,2
+2A,2,16,844,14,6,low,chouse,L,chouse,gouse,shouse,0
+2A,2,12,853,15,7,high,soog,C,toog,soog,boog,1
+2A,2,9,933,16,8,high,fidge,C,bidge,fidge,hidge,1
