@@ -23,7 +23,7 @@
         override_safe_mode: true,
         on_finish: function() {
             jsPsych.data.displayData('json');
-            var show_results_ld = jsPsych.data.get().filter({test_tr_type:'test_ld'})
+            // var show_results_ld = jsPsych.data.get().filter({test_tr_type:'test_ld'})
             // console.log(show_results_ld)
             uploadToRedcap("2AE240F13B8103D36A665806DE617EDF")
     
@@ -166,7 +166,7 @@
                     console.log(response.text());
                 });
             });
-        console.log(jsPsych.data.get().filter({test_tr_type: 'test_ld'}).json())
+        // console.log(jsPsych.data.get().filter({test_tr_type: 'test_ld'}).json())
     }
 
     function createExperiment(preload_stims,teaching_trials,recall_trials,form_trials,link_trials,ld_trials) {
