@@ -1,0 +1,17 @@
+﻿order,block,raw,rand,rand2,tr_num,block_tr_num,condition,audio,target,target_loc,top_left,top_right,bottom_left,bottom_right,correct_response
+2B,1,1,1,37,1,1,high,fidge,A33,top_left,A33,E1,I1,B2,0
+2B,1,6,2,378,2,2,low,vib,C31,top_right,G3,C31,A1,E3,1
+2B,1,4,1,266,3,3,high,soog,I1,bottom_right,E1,A33,B2,I1,3
+2B,1,5,2,586,4,4,low,wath,A1,top_left,A1,E3,G3,C31,0
+2B,1,3,1,335,5,5,high,meeb,E1,bottom_left,B2,I1,E1,A33,2
+2B,1,8,2,853,6,6,low,chouse,G3,bottom_right,E3,A1,C31,G3,3
+2B,1,2,1,338,7,7,high,cuth,B2,top_right,I1,B2,A33,E1,1
+2B,1,7,2,972,8,8,low,nez,E3,bottom_left,C31,G3,E3,A1,2
+2B,2,14,3,104,9,1,low,vib,C31,bottom_left,A1,G3,C31,E3,2
+2B,2,9,4,254,10,2,high,fidge,A33,bottom_right,E1,B2,I1,A33,3
+2B,2,15,3,121,11,3,low,nez,E3,top_right,C31,E3,A1,G3,1
+2B,2,10,4,416,12,4,high,cuth,B2,bottom_left,A33,I1,B2,E1,2
+2B,2,13,3,528,13,5,low,wath,A1,bottom_right,E3,C31,G3,A1,3
+2B,2,12,4,418,14,6,high,soog,I1,top_left,I1,A33,E1,B2,0
+2B,2,16,3,964,15,7,low,chouse,G3,top_left,G3,A1,E3,C31,0
+2B,2,11,4,563,16,8,high,meeb,E1,top_right,B2,E1,A33,I1,1

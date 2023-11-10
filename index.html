@@ -21,17 +21,18 @@
 
     const jsPsych  = initJsPsych( {
         override_safe_mode: true,
+        on_close: function() {
+            uploadToRedcap("2AE240F13B8103D36A665806DE617EDF")
+        },
         on_finish: function() {
-            jsPsych.data.displayData('json');
-            // var show_results_ld = jsPsych.data.get().filter({test_tr_type:'test_ld'})
-            // console.log(show_results_ld)
+            // jsPsych.data.displayData('json');
             uploadToRedcap("2AE240F13B8103D36A665806DE617EDF")
     
         }
     });
 
-    var subject_id = jsPsych.data.getURLVariable('sub')
-    var trial_order = jsPsych.data.getURLVariable('order')
+    var subject_id = jsPsych.data.getURLVariable('s')
+    var trial_order = jsPsych.data.getURLVariable('o')
     let today = new Date()
     var DoT = {"month":today.getMonth()+1,"day":today.getDate(),"year":today.getFullYear(),"hour":today.getHours(),"min":today.getMinutes()}
 
@@ -231,7 +232,7 @@
             button_label: [imageStart+"start-button"+buttonStop],
         }
         
-        // timeline.push(enter_fullscreen)
+        timeline.push(enter_fullscreen)
 
         var blank_screen = {
             type:jsPsychHtmlKeyboardResponse,
@@ -740,56 +741,6 @@
                     timeline.push(retrieve_trial)
                 }
 
-                // // study trial
-                // if (cur_trials[i]['tr_type']=='study'){
-                //     var study_trial = {
-                //         timeline: [blank_screen,teaching_trial],
-                //         timeline_variables:[
-                //             {tr_num: cur_tr_num,
-                //             alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-                //             // alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-                //             name: cur_name,
-                //             button: imageStart+"blank-button"+buttonStop,
-                //             tr_dur: cur_dur
-                //             }
-                //         ],
-                //         conditional_function: function() {
-                //             if(phase == filter_phase) {
-                //                 return true;
-                //             } else {
-                //                 return false;
-                //             }
-                //         }
-                //     }
-                //     timeline.push(study_trial)
-                // }
-
-                // // retrieve trial
-                // if (cur_trials[i]['tr_type']=='retrieve') {
-                //     var retrieve_trial = {
-                //         timeline: [blank_screen,teaching_trial,click_advance],
-                //         timeline_variables:[
-                //             {tr_num: cur_tr_num,
-                //             alien: [cur_alien,imageStart+"blank-button"+buttonStop],
-                //             alien_click: [cur_alien,imageStart+"next-button"+buttonStop],
-                //             // name: audioExt+"teaching/prompt.wav",
-                //             name: cur_name,
-                //             button: imageStart+"blank-button"+buttonStop,
-                //             tr_dur: cur_dur
-                //             }
-                //         ],
-                //         conditional_function: function() {
-                //             if(phase == filter_phase) {
-                //                 return true;
-                //             } else {
-                //                 return false;
-                //             }
-                //         }
-                //     }
-                //     timeline.push(retrieve_trial)
-                // }
-
-
             } 
 
         }
@@ -959,7 +910,7 @@
             }
         }
 
-        // create_recall_trials()
+        create_recall_trials()
 
 
         /*

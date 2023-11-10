@@ -1,0 +1,17 @@
+﻿order,block,raw,rand,tr_num,block_tr_num,condition,word,alien,tr_dur
+1B,1,7,14,1,1,low,nez,E3,3000
+1B,1,1,171,2,2,high,fidge,A33,3000
+1B,1,2,206,3,3,low,wath,A1,3000
+1B,1,4,206,4,4,low,chouse,G3,3000
+1B,1,3,770,5,5,high,meeb,E1,3000
+1B,1,5,771,6,6,low,vib,C31,3000
+1B,1,8,941,7,7,high,soog,I1,3000
+1B,1,6,965,8,8,high,cuth,B2,3000
+1B,2,15,506,9,1,low,nez,E3,3000
+1B,2,14,507,10,2,high,cuth,B2,3000
+1B,2,10,680,11,3,low,wath,A1,3000
+1B,2,16,706,12,4,high,soog,I1,3000
+1B,2,12,711,13,5,low,chouse,G3,3000
+1B,2,11,825,14,6,high,meeb,E1,3000
+1B,2,9,872,15,7,high,fidge,A33,3000
+1B,2,13,878,16,8,low,vib,C31,3000
