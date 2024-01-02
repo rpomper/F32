@@ -320,6 +320,10 @@ body {
   color: white;
 }
 
+img {
+  -webkit-user-drag: none;
+}
+
 /* end ron */
 
 .jspsych-display-element {
