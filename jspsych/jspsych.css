@@ -411,9 +411,9 @@ body {
 }
 
 .jspsych-btn:disabled {
-  background-color: #eee;
+  background-color: transparent;
   color: #aaa;
-  border-color: #ccc;
+  border-color: transparent;
   cursor: not-allowed;
 }
 

@@ -1098,6 +1098,7 @@
                 choices: jsPsych.timelineVariable('aliens'),
                 prompt: "",
                 response_ends_trial: jsPsych.timelineVariable('response'),
+                response_allowed_while_playing: false,
                 trial_duration: jsPsych.timelineVariable('tr_dur'),
                 grid_attribute: true,
                 margin_vertical: ['10px'],
@@ -1176,6 +1177,7 @@
                     }
                 }
                 timeline.push(link_trial)
+
             }
 
         }
@@ -1572,6 +1574,15 @@
         }
 
         create_ld_trials()
+
+
+        var exit_fullscreen = {
+            type: jsPsychFullscreen,
+            delay_after:0,
+            fullscreen_mode: false
+        }
+        
+        timeline.push(exit_fullscreen)
 
         return timeline
 
