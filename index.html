@@ -33,7 +33,7 @@
 
     var subject_id = jsPsych.data.getURLVariable('s')
     var trial_order = jsPsych.data.getURLVariable('o')
-    var iPad = jsPsych.data.getURLVariable('tap')
+    var iPad = jsPsych.data.getURLVariable('tap').toString()
     let today = new Date()
     var DoT = {"month":today.getMonth()+1,"day":today.getDate(),"year":today.getFullYear(),"hour":today.getHours(),"min":today.getMinutes()}
 
@@ -341,7 +341,7 @@
             var ready_ship = {
                 timeline:[assemble_ship,pack_ship,blank_video],
                 conditional_function: function() {
-                    if(phase == 1 && tap == "no") {
+                    if(phase == 1 && iPad == "no") {
                         return true
                     } else {
                         return false
